@@ -1,6 +1,9 @@
-% Kinematic Model Assembly of SMM - Follows the procedure executed in
+% Kinematic Model Assembly Definitions of SMM
+% Tfs of structural blocks and assembly parameters used to build the Ovidius SMM are generated
+% Are used in kinematic_model_generate_assembly_smm.m that follows the procedure executed in
 % structure_assembly_GA.m - Modifications are made with regard to OVIDIUS
 % manipulator characteristics
+
 clear;
 close all;
 
@@ -35,4 +38,12 @@ pseudo_module_URDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_S
 [pseudo_module_links,CoM_pseudo_module_links,g_k_lj_0,g_k_bj_0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(pseudo_module_Robot,pseudo_module_Config,pseudo_module_NumDoF);
 
 wp_j_0 = [1 0 0]';
+PseudoConnectorja = char(pseudo_module_Robot.BodyNames(2));
+PseudoConnectorjb = char(pseudo_module_Robot.BodyNames(3));
+g_s_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config, PseudoConnectorjb); % pseudo tf with respect to {S}
+g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorja, PseudoConnectorjb);  % pseudo tf with respect to pseudo module frame {ki}
 % g_k_lj_0 = [];% the tf from CoM of pseudo module to the {k_j} frame (origin) of the module
+
+% Synthetic joints tfs with
+syn1_eul = [0 pi/2 pi/2];
+tformZYZ = eul2tform(eul,'ZYZ')
