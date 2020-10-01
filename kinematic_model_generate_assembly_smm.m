@@ -28,6 +28,14 @@ if ~(strcmp(structure(1,:),fixed_active_string_notation)) % if 1st string elemen
     warning('[SMM STRUCTURE ASSEMBLY]: 1st string element is not declared ACTIVE')
 else
     %% Structure after 1st active joint is correct
+    
+    %% START - BUILD base_link
+    
+    [xi_a1_0] = build_base_link();
+
+    %% END - BUILD base_link 
+    
+    
     %% START - Switch statement for 1st meta link follows-Always 2 sring elements are checked!
     % For 1st meta link 2 conditions exist:
 
@@ -37,6 +45,8 @@ else
              switch structure(3,:)
                  case passive_under_string_notation % case 2.1.1 ->  since 1st element is empty then MUST exist pseudo connected with under base
                  
+                     [passive_under_tform] = add_passive_under_synthetic_joint_tf();
+                     
                  otherwise
                     warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
              end

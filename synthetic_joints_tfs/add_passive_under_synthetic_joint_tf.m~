@@ -1,0 +1,3 @@
+function [passive_under_tform] = add_passive_under_synthetic_joint_tf()
+
+end
