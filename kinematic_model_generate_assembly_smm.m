@@ -3,8 +3,17 @@ addpath('/home/nikos/matlab_ws/screw_kinematics_library/screws')
 addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
 addpath('/home/nikos/matlab_ws/screw_dynamics')
 
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
+
 clear;
 close all;
+
+%% Only visualization for code evaluation
+% test robot
+robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
+
+[RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
 
 %% Define smm structure string (in optimization it is ga generated!)
 logical wrong_string_structure;
@@ -15,7 +24,7 @@ passive_back_string_notation = '31';
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-% structure(3,:) = '0';
+structure(3,:) = passive_under_string_notation;
 % structure(4,:) = '0';
 % structure(5,:) = '0';
 % structure(6,:) = '0';
@@ -31,8 +40,9 @@ else
     
     %% START - BUILD base_link
     
-    [xi_a1_0] = build_base_link();
-
+    [xi_a1_0,g_s_m_i1_new] = build_base_link();
+    figure(RefFig); 
+    xi_graph = drawtwist(xi_a1_0); hold on;
     %% END - BUILD base_link 
     
     
@@ -45,18 +55,33 @@ else
              switch structure(3,:)
                  case passive_under_string_notation % case 2.1.1 ->  since 1st element is empty then MUST exist pseudo connected with under base
                  
-                     [passive_under_tform] = add_passive_under_synthetic_joint_tf();
+                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
+                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+                     figure(RefFig); 
+                     xi_graph = drawtwist(xi_pj_0); hold on;
                      
                  otherwise
                     warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
              end
              
         case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface
+            
+             [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
+             [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+             figure(RefFig); 
+             xi_graph = drawtwist(xi_pj_0); hold on;
+           
             % nested switch for 2nd element
             switch structure(3,:)
                  case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
+                     % nothing to add!
+                        
+                 case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static
                      
-                 case passive_under_string_notation % case 2.2.2 ->
+                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
+                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+                     figure(RefFig); 
+                     xi_graph = drawtwist(xi_pj_0); hold on;
                      
                  case passive_back_string_notation % case 2.2.3 ->
                  

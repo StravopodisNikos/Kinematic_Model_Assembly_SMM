@@ -41,7 +41,7 @@ wp_j_0 = [1 0 0]';
 PseudoConnectorja = char(pseudo_module_Robot.BodyNames(2));
 PseudoConnectorjb = char(pseudo_module_Robot.BodyNames(3));
 g_s_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config, PseudoConnectorjb); % pseudo tf with respect to {S}
-g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorja, PseudoConnectorjb);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
+g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorjb, PseudoConnectorja);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 % g_k_lj_0 = [];% the tf from CoM of pseudo module to the {k_j} frame (origin) of the module
 
 % Synthetic joints tfs with
