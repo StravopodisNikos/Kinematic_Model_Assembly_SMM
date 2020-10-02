@@ -43,6 +43,7 @@ else
     [xi_a1_0,g_s_m_i1_new] = build_base_link();
     figure(RefFig); 
     xi_graph = drawtwist(xi_a1_0); hold on;
+    drawframe(g_s_m_i1_new,0.15); hold on;
     %% END - BUILD base_link 
     
     
@@ -57,9 +58,7 @@ else
                  
                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); 
-                     xi_graph = drawtwist(xi_pj_0); hold on;
-                     
+                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
                  otherwise
                     warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
              end
@@ -67,10 +66,10 @@ else
         case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface
             
              [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
+             figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
              [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-             figure(RefFig); 
-             xi_graph = drawtwist(xi_pj_0); hold on;
-           
+             figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+             
             % nested switch for 2nd element
             switch structure(3,:)
                  case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
@@ -79,9 +78,13 @@ else
                  case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static
                      
                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
+                     figure(RefFig);
+                     drawframe(g_s_m_i1_new,0.15); hold on;
+                     
+                     % up2here all good
+                     
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); 
-                     xi_graph = drawtwist(xi_pj_0); hold on;
+                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
                      
                  case passive_back_string_notation % case 2.2.3 ->
                  

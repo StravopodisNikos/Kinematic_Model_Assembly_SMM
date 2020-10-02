@@ -30,12 +30,17 @@ switch synthetic_name
         error_msg = false;
         
     case 'synthetic4'   % pseudo_moving->pseudo_static_under
-        syn1_rpy = [0 synthetic4_origin_p 0];
-        syn1_xyz = [synthetic4_origin_x 0.101 0]';
+        syn4_rpy = [-1.5708 synthetic4_origin_p 0];
+        syn4_xyz = [synthetic4_origin_x 0.101 0]';
 
-        synthetic_tform = eul2tform(syn1_rpy);
-        synthetic_tform(1:3,4) = syn1_xyz;
-
+%         synthetic_tform = eul2tform(syn4_rpy);
+%         synthetic_tform(1:3,4) = syn4_xyz;
+        synthetic_Rot_tf = rotz(syn4_rpy(3))*roty(syn4_rpy(2))*rotx(syn4_rpy(1));
+        [wmega_Rsyn, theta_Rsyn] = rotparam(synthetic_Rot_tf);
+        exp_wmega_Rsyn = skewexp(wmega_Rsyn, theta_Rsyn);
+        
+        synthetic_tform = [exp_wmega_Rsyn syn4_xyz; 0 0 0 1];   % the local tf induced by synthetic joint
+        
         % New global tf
         g_s_m_i1 = g_s_m_i * synthetic_tform;
         error_msg = false;

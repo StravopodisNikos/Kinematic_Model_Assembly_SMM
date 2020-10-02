@@ -26,10 +26,10 @@ baselink_URDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xa
 [baselink_Robot,baselink_Fig,baselink_Config,baselink_NumDoF] = ImportRobotRefAnatomyModel(baselink_URDFfile);
 
 base_link = char(baselink_Robot.BodyNames(1));
-g_s_1_0 = getTransform(baselink_Robot,baselink_Config,base_link);
-p_a1_0 = g_s_1_0(1:3,4);
-wa_1_0 = [0 0 1]';
-xi_a1 = createtwist(wa_1_0,p_a1_0); % ξa1
+g_s_a1_0 = getTransform(baselink_Robot,baselink_Config,base_link);
+p_a1_0 = g_s_a1_0(1:3,4);
+w_a1_0 = [0 0 1]';
+xi_a1_0 = createtwist(w_a1_0,p_a1_0); % ξa1
 
 % 2. Pseudojoint Module
 pseudo_module_URDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/pseudo_module.urdf';
@@ -41,9 +41,18 @@ wp_j_0 = [1 0 0]';
 PseudoConnectorja = char(pseudo_module_Robot.BodyNames(2));
 PseudoConnectorjb = char(pseudo_module_Robot.BodyNames(3));
 g_s_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config, PseudoConnectorjb); % pseudo tf with respect to {S}
-g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorja, PseudoConnectorjb);  % pseudo tf with respect to pseudo module frame {ki}
+g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorjb, PseudoConnectorja);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 % g_k_lj_0 = [];% the tf from CoM of pseudo module to the {k_j} frame (origin) of the module
 
-% Synthetic joints tfs with
-syn1_eul = [0 pi/2 pi/2];
-tformZYZ = eul2tform(eul,'ZYZ')
+% 3. Pseudo moving -> Pseudo static
+
+PseudoConnector_a_2 = char(pseudo_module_Robot.BodyNames(4));
+PseudoConnector_b_2 = char(pseudo_module_Robot.BodyNames(5));
+
+%% Synthetic joints tfs with
+syn1_rpy = [0 0 0];
+syn1_xyz = [0 0 0.048]';
+syn1_tform = eul2tform(syn1_rpy);
+syn1_tform(1:3,4) = syn1_xyz;
+
+% Evaluation of fwk g_s_pj_0 - g_s_a1_0 * syn1_tform * g_k_pj_0 == 0

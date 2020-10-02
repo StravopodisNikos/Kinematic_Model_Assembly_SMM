@@ -44,7 +44,17 @@ g_s_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config, PseudoConnect
 g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorjb, PseudoConnectorja);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 % g_k_lj_0 = [];% the tf from CoM of pseudo module to the {k_j} frame (origin) of the module
 
-% Synthetic joints tfs with
+% 3. Pseudo moving -> Pseudo static
+PseudoConnector_b_1 = char(RefRobot.BodyNames(3));
+PseudoConnector_a_2 = char(RefRobot.BodyNames(4));
+PseudoConnector_b_2 = char(RefRobot.BodyNames(5));
+g_s_p_b_1_0 = getTransform(RefRobot, RefConfig, PseudoConnector_b_1);
+g_s_p_a_2_0 = getTransform(RefRobot, RefConfig, PseudoConnector_a_2); % pseudo tf with respect to {S}
+g_s_p_b_2_0 = getTransform(RefRobot, RefConfig, PseudoConnector_b_2); % pseudo tf with respect to {S}
+g_p1_p2  = getTransform(RefRobot, RefConfig,PseudoConnector_a_2, PseudoConnector_b_1);  % pseudo_static2 tf with respect to pseudo_moving1 frame
+g_p_b_2_p_a_2_0 = getTransform(RefRobot, RefConfig,PseudoConnector_b_2, PseudoConnector_a_2);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
+
+%% Synthetic joints tfs with
 syn1_rpy = [0 0 0];
 syn1_xyz = [0 0 0.048]';
 syn1_tform = eul2tform(syn1_rpy);

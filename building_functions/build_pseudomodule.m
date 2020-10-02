@@ -14,12 +14,16 @@ g_k_pj_0 =    [ 1.0000         0         0         0; ...
 % frame
 g_s_pj_0 = g_s_m_i * g_k_pj_0;
 
+g_s_pj_0_loc = g_s_m_i * g_k_pj_0 * inv(g_s_m_i);
+
 % Extract point in the pseudo twist axis
 p_pj_0 = g_s_pj_0(1:3,4);
 
 % Extract wmega of pseudo twist axis
-R_s_pj_0 = g_s_pj_0(1:3,1:3);
-[w_s_pj_0 th_s_pj_0] = rotparam(R_s_pj_0);
+%R_s_pj_0 = g_s_pj_0(1:3,1:3);
+R_s_pj_0_loc = g_s_pj_0_loc(1:3,1:3);
+
+[w_s_pj_0,th_s_pj_0] = rotparam(R_s_pj_0_loc); %rotparam(R_s_pj_0*inv(rotz(pi/2)*inv(rotx(pi/2)))) helped me understand i needed local tf
 
 % Extract reference twist
 xi_pj_0 = createtwist(w_s_pj_0,p_pj_0); % ξpj
