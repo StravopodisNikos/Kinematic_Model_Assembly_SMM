@@ -1,12 +1,11 @@
-function [xi_pj_0,g_s_m_i1] = build_pseudomodule(g_s_m_i)
-% Adds a pseudojoint module in the serial metamorphic chain
+function [xi_pj_0,g_s_m_i1] = build_activemodule(g_s_m_i)
+% Adds an  active Dynamixel module in the serial metamorphic chain
 % Input: 1. the previously last frame attached to serial chain
 
-% g_k_pj_0 = loaded from mat file. is the default tf between static and moving frame
-g_k_pj_0 =    [ 1.0000         0         0         0; ...
-                     0   -0.0000   -1.0000    0.0250; ...
-                     0    1.0000   -0.0000    0.1180; ...
-                     0         0         0    1.0000];
+g_k_pj_0 =    [ 1.0000    0.0000         0    0.0000
+    0.0000    1.0000   -0.0000    0.0320
+         0   -0.0000    1.0000   -0.0000
+         0         0         0    1.0000];
 
 % Extract g_s_pj_0: the tf of pseudo moving with respect to spatial {S}
 % frame

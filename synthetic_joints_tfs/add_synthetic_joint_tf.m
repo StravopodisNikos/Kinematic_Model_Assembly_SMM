@@ -28,6 +28,20 @@ switch synthetic_name
         % New global tf
         g_s_m_i1 = g_s_m_i * synthetic_tform;
         error_msg = false;
+
+    case 'synthetic2'   % pseudo_moving->pseudo_static_under
+        syn2_rpy = [0 synthetic2_origin_p 0];
+        syn2_xyz = [synthetic2_origin_x 0.1444 0]';
+
+        synthetic_Rot_tf = rotz(syn2_rpy(3))*roty(syn2_rpy(2))*rotx(syn2_rpy(1));
+        [wmega_Rsyn, theta_Rsyn] = rotparam(synthetic_Rot_tf);
+        exp_wmega_Rsyn = skewexp(wmega_Rsyn, theta_Rsyn);
+        
+        synthetic_tform = [exp_wmega_Rsyn syn2_xyz; 0 0 0 1];   % the local tf induced by synthetic joint
+        
+        % New global tf
+        g_s_m_i1 = g_s_m_i * synthetic_tform;
+        error_msg = false;
         
     case 'synthetic4'   % pseudo_moving->pseudo_static_under
         syn4_rpy = [-1.5708 synthetic4_origin_p 0];
@@ -44,7 +58,20 @@ switch synthetic_name
         % New global tf
         g_s_m_i1 = g_s_m_i * synthetic_tform;
         error_msg = false;
+    case 'active_assembly'
+        active2pseudo_origin_rpy= [0 1.5708 0];
+        active2pseudo_origin_xyz= [0 0.1 0]'; 
+                
+        active2pseudo_Rot_tf = rotz(active2pseudo_origin_rpy(3))*roty(active2pseudo_origin_rpy(2))*rotx(active2pseudo_origin_rpy(1));
+        [wmega_Ractive2pseudo, theta_Ractive2pseudo] = rotparam(active2pseudo_Rot_tf);
+        exp_wmega_Ractive2pseudo = skewexp(wmega_Ractive2pseudo, theta_Ractive2pseudo);
         
+        synthetic_tform = [exp_wmega_Ractive2pseudo active2pseudo_origin_xyz; 0 0 0 1];   % the local tf induced by active2pseudo assembly
+        
+        % New global tf
+        g_s_m_i1 = g_s_m_i * synthetic_tform;
+        error_msg = false;
+
     otherwise
         error_msg = true;
 end

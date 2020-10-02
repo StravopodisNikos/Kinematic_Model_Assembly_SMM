@@ -54,6 +54,12 @@ g_s_p_b_2_0 = getTransform(RefRobot, RefConfig, PseudoConnector_b_2); % pseudo t
 g_p1_p2  = getTransform(RefRobot, RefConfig,PseudoConnector_a_2, PseudoConnector_b_1);  % pseudo_static2 tf with respect to pseudo_moving1 frame
 g_p_b_2_p_a_2_0 = getTransform(RefRobot, RefConfig,PseudoConnector_b_2, PseudoConnector_a_2);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 
+% 4. Active moving -> Active static
+Active_Module_a_1 = char(RefRobot.BodyNames(6));
+Active_Module_b_1 = char(RefRobot.BodyNames(7));
+g_s_a_b_1_0 = getTransform(RefRobot, RefConfig, Active_Module_b_1);
+g_k_ai_0 = getTransform(RefRobot, RefConfig,Active_Module_b_1, Active_Module_a_1);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
+
 %% Synthetic joints tfs with
 syn1_rpy = [0 0 0];
 syn1_xyz = [0 0 0.048]';

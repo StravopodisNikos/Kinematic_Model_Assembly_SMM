@@ -24,7 +24,7 @@ passive_back_string_notation = '31';
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_under_string_notation;
+structure(3,:) = passive_back_string_notation;
 % structure(4,:) = '0';
 % structure(5,:) = '0';
 % structure(6,:) = '0';
@@ -48,8 +48,7 @@ else
     
     
     %% START - Switch statement for 1st meta link follows-Always 2 sring elements are checked!
-    % For 1st meta link 2 conditions exist:
-
+    % For 1st meta link, 2 conditions exist:
     switch structure(2,:) % first switch for 1st element
         case no_passive_string_notation % 1st case is that no pseudo exists in 2nd string element
             % nested switch for 2nd element
@@ -75,26 +74,45 @@ else
                  case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
                      % nothing to add!
                         
-                 case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static
+                 case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static with syntetic 4
                      
                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
                      figure(RefFig);
-                     drawframe(g_s_m_i1_new,0.15); hold on;
-                     
-                     % up2here all good
-                     
+                     drawframe(g_s_m_i1_new,0.15); hold on;                     
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
                      
-                 case passive_back_string_notation % case 2.2.3 ->
-                 
+                 case passive_back_string_notation % case 2.2.3 ->  pseudo_moving->pseudo_static with syntetic 2
+
+                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
+                     figure(RefFig);
+                     drawframe(g_s_m_i1_new,0.15); hold on;
+                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+                                          
                 otherwise
-                    warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
+                    warning('[SMM STRUCTURE ASSEMBLY]: 3rd string element is not valid')                     
              end
         otherwise
             warning('[SMM STRUCTURE ASSEMBLY]: 2nd string element is not valid')
     end
     %% END - Switch statement for 1st meta link
-            
+
+    %% START - Add active DXL
+    
+     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
+     figure(RefFig);
+     drawframe(g_s_m_i1_new,0.15); hold on;
+     [xi_ai_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
+     figure(RefFig); xi_graph = drawtwist(xi_ai_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+                        
+    %% END - Add active DXL
+    
+    %% START - Switch statement for 2nd meta link follows-Always 2 sring elements are checked!
+    % For 2nd meta link, 2 conditions exist:
+    
+    
+    
+    %% END - Switch statement for 2nd meta link
 end
     
