@@ -15,29 +15,61 @@ end
 % Obtain POE equation by structure string
 i_cnt = 0;
 j_cnt = 0;
-interm_cnt = 1;
+interm_cnt = 0;
 exp_pj_interm(:,:,1) = eye(4);
 g_pj(:,:,1) = eye(4);
 g_ai(:,:,1) = eye(4);
 
 for assembly_part_cnt=1:nAssemblyParts
+    
     switch structure(assembly_part_cnt,:)
         case 'x0' % add active exponential
+            if interm_cnt==0    %for 1st only
+                exp_pj_interm_last = eye(4);
+            else
+                exp_pj_interm_last = exp_pj_interm(:,:,interm_cnt);
+            end
+
+            if i_cnt==0    %for 1st only
+                g_ai_last = eye(4);
+            else
+                g_ai_last = g_ai(:,:,i_cnt) * inv(g_ai_ref(:,:,i_cnt));
+            end
+            
             i_cnt = i_cnt +1;
             
-            g_ai(:,:,i_cnt) = g_ai(:,:,i_cnt) * exp_pj_interm(:,:,interm_cnt) * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
+            g_ai(:,:,i_cnt) = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
             
             interm_cnt = 0;             
         case 'x9' % nothing here
             exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4);
             
-        case ('21' | '31') % add passive exponential
+        case '21' % add passive exponential
             j_cnt = j_cnt + 1;
+            if interm_cnt==0    %previous was active
+                exp_pj_interm_last = eye(4);
+            else
+                exp_pj_interm_last = exp_pj_interm(:,:,interm_cnt);
+            end
+            
             interm_cnt = interm_cnt +1;
             
-            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * exp_pj(:,:,j_cnt);
+            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm_last * exp_pj(:,:,j_cnt);
             
-            g_pj(:,:,j_cnt) = g_pj(:,:,j_cnt) * exp_pj(:,:,i_cnt) * g_pj_ref(:,:,j_cnt);
+            %g_pj(:,:,j_cnt) = g_pj(:,:,j_cnt) * exp_pj(:,:,i_cnt) * g_pj_ref(:,:,j_cnt);
+        case '31' % add passive exponential
+            j_cnt = j_cnt + 1;
+            if interm_cnt==0    %previous was active
+                exp_pj_interm_last = eye(4);
+            else
+                exp_pj_interm_last = exp_pj_interm(:,:,interm_cnt);
+            end
+            
+            interm_cnt = interm_cnt +1;
+            
+            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm_last * exp_pj(:,:,j_cnt);
+            
+            %g_pj(:,:,j_cnt) = g_pj(:,:,j_cnt) * exp_pj(:,:,i_cnt) * g_pj_ref(:,:,j_cnt);            
     end
 end
 

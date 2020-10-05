@@ -229,6 +229,9 @@ else
 end
 
 % SET configuration and anatomy of assembled structure
-qa = [0 1 1]'; qp = [1 1 0.5 0.5]';
+qa = [0.5 1 0.1]'; qp = [0 0 0 0]';
 % POE FORWARD KINEMATICS
 [g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
+
+[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
+figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); hold on; 
