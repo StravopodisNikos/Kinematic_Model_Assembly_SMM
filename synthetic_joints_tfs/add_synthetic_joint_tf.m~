@@ -5,15 +5,15 @@ function [synthetic_tform,g_s_m_i1,error_msg] = add_synthetic_joint_tf(synthetic
 % Next parameters are defined in assembly_parameters_for_ovidius_robot.yaml
 % ==================================================
 % -------> OPTIMIZATION ASSEMBLY PARAMETERS <-------
-synthetic2_origin_x = -0.075 %var \in [-0.075 ~ 0.025]
-synthetic2_origin_p = 1.5708 %var \in [-1.5708 ~ 1.5708]
-synthetic3_origin_x = -0.055  %var \in [-0.055~-0.025]
-synthetic3_origin_z = -0.05  %var \in [-0.05~0.05]
-synthetic3_origin_p = 1.5708  %var \in [-1.5708 ~ 1.5708]
-synthetic4_origin_x = 0 %var \in [-0.025 ~ 0.025]
-synthetic4_origin_p = 1.5708 %var \in [-1.5708 ~ 1.5708]
-synthetic5_origin_z = -0.015 %var \in [-0.015~0.025]
-synthetic5_origin_p = 0 %var \in [-1.5708 ~ 1.5708]
+synthetic2_origin_x = -0.075;   %var \in [-0.075 ~ 0.025]
+synthetic2_origin_p = 1.5708;   %var \in [-1.5708 ~ 1.5708]
+synthetic3_origin_x = -0.055;   %var \in [-0.055~-0.025]
+synthetic3_origin_z = -0.05;    %var \in [-0.05~0.05]
+synthetic3_origin_p = 1.5708;   %var \in [-1.5708 ~ 1.5708]
+synthetic4_origin_x = 0;        %var \in [-0.025 ~ 0.025]
+synthetic4_origin_p = 1.5708;   %var \in [-1.5708 ~ 1.5708]
+synthetic5_origin_z = -0.015;   %var \in [-0.015~0.025]
+synthetic5_origin_p = 0;        %var \in [-1.5708 ~ 1.5708]
 
 % ==================================================
 
@@ -43,6 +43,19 @@ switch synthetic_name
         g_s_m_i1 = g_s_m_i * synthetic_tform;
         error_msg = false;
         
+    case 'synthetic3'   % pseudo_moving->pseudo_static_under
+        syn3_rpy = [0 synthetic3_origin_p 0];
+        syn3_xyz = [synthetic3_origin_x 0.1444 0]';
+
+        synthetic_Rot_tf = rotz(syn3_rpy(3))*roty(syn3_rpy(2))*rotx(syn2_rpy(1));
+        [wmega_Rsyn, theta_Rsyn] = rotparam(synthetic_Rot_tf);
+        exp_wmega_Rsyn = skewexp(wmega_Rsyn, theta_Rsyn);
+        
+        synthetic_tform = [exp_wmega_Rsyn syn3_xyz; 0 0 0 1];   % the local tf induced by synthetic joint
+        
+        % New global tf
+        g_s_m_i1 = g_s_m_i * synthetic_tform;
+        error_msg = false;        
     case 'synthetic4'   % pseudo_moving->pseudo_static_under
         syn4_rpy = [-1.5708 synthetic4_origin_p 0];
         syn4_xyz = [synthetic4_origin_x 0.101 0]';
@@ -58,9 +71,32 @@ switch synthetic_name
         % New global tf
         g_s_m_i1 = g_s_m_i * synthetic_tform;
         error_msg = false;
+    case 'synthetic5'   % pseudo_moving->pseudo_static_under
+        syn5_rpy = [-1.5708 synthetic5_origin_p 0];
+        syn5_xyz = [ 0 0.0525 synthetic5_origin_z]';
+
+        synthetic_Rot_tf = rotz(syn5_rpy(3))*roty(syn5_rpy(2))*rotx(syn5_rpy(1));
+        [wmega_Rsyn, theta_Rsyn] = rotparam(synthetic_Rot_tf);
+        exp_wmega_Rsyn = skewexp(wmega_Rsyn, theta_Rsyn);
+        
+        synthetic_tform = [exp_wmega_Rsyn syn5_xyz; 0 0 0 1];   % the local tf induced by synthetic joint
+        
+        % New global tf
+        g_s_m_i1 = g_s_m_i * synthetic_tform;
+        error_msg = false;        
     case 'active_assembly'
-        active2pseudo_origin_xyz= [0 0.1 0]; 
-        active2pseudo_origin_rpy= 0 1.5708 0 
+        active2pseudo_origin_rpy= [0 1.5708 0];
+        active2pseudo_origin_xyz= [0 0.1 0]'; 
+                
+        active2pseudo_Rot_tf = rotz(active2pseudo_origin_rpy(3))*roty(active2pseudo_origin_rpy(2))*rotx(active2pseudo_origin_rpy(1));
+        [wmega_Ractive2pseudo, theta_Ractive2pseudo] = rotparam(active2pseudo_Rot_tf);
+        exp_wmega_Ractive2pseudo = skewexp(wmega_Ractive2pseudo, theta_Ractive2pseudo);
+        
+        synthetic_tform = [exp_wmega_Ractive2pseudo active2pseudo_origin_xyz; 0 0 0 1];   % the local tf induced by active2pseudo assembly
+        
+        % New global tf
+        g_s_m_i1 = g_s_m_i * synthetic_tform;
+        error_msg = false;
 
     otherwise
         error_msg = true;
