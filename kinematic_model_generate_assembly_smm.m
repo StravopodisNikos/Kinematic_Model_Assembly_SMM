@@ -25,7 +25,7 @@ addpath('/home/nikos/matlab_ws/screw_dynamics')
 
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
-
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
 clear;
 close all;
 
@@ -227,4 +227,8 @@ else
          %% END - Add active DXL
     end
 end
-    
+
+% SET configuration and anatomy of assembled structure
+qa = [0 1 1]'; qp = [1 1 0.5 0.5]';
+% POE FORWARD KINEMATICS
+[g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);

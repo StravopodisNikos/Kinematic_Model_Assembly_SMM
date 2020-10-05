@@ -64,7 +64,7 @@ else
     %% START - BUILD base_link
     [xi_a1_0,g_s_m_i1_new] = build_base_link();
     figure(RefFig); xi_graph = drawtwist(xi_a1_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-    [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a1_0, i_cnt, g_s_m_i1_new);
+    [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a1_0, g_s_m_i1_new);
     %% END - BUILD base_link 
     
     %% START - Switch statement for 1st meta link follows-Always 2 sring elements are checked!
@@ -78,7 +78,7 @@ else
                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                  otherwise
                     warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
              end
@@ -89,7 +89,7 @@ else
              figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
              [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
              figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-             [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+             [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
             % nested switch for 2nd element
             switch structure(3,:)
                  case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
@@ -101,14 +101,14 @@ else
                      figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                  case passive_back_string_notation % case 2.2.3 ->  pseudo_moving->pseudo_static with syntetic 2
                      j_cnt = j_cnt+1;
                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
                      figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);                     
+                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);                     
                 otherwise
                     warning('[SMM STRUCTURE ASSEMBLY]: 3rd string element is not valid')                     
              end
@@ -129,7 +129,7 @@ else
          drawframe(g_s_m_i1_new,0.15); hold on;
          [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
          figure(RefFig); xi_graph = drawtwist(xi_a2_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, i_cnt, g_s_m_i1_new);
+         [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, g_s_m_i1_new);
          %% END - Add active DXL
         
         
@@ -144,13 +144,13 @@ else
                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                     case passive_back_string_notation   % case 3.1.2
                          j_cnt = j_cnt+1;
                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0,  g_s_m_i1_new);
                     otherwise
                          warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid') 
                 end
@@ -160,7 +160,7 @@ else
                 [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
                 [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                 figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);         
+                [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);         
                 switch structure(6,:) % case 3.2
                     case no_passive_string_notation     % case 3.2.1
                          % nothing to add  -> this case leads to 3.1.1
@@ -170,14 +170,14 @@ else
                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                     case passive_back_string_notation   % case 3.2.3
                          j_cnt = j_cnt+1;
                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on; 
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                     otherwise
                          warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid')
                 end 
@@ -187,7 +187,7 @@ else
                  [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
                  [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                  figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;                  
-                 [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                 [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                 switch structure(6,:)
                     case no_passive_string_notation     % case 3.3.1
                         % nothing to add  -> this case leads to 3.1.2
@@ -197,7 +197,7 @@ else
                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, j_cnt, g_s_m_i1_new);
+                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
                     case passive_back_string_notation   % case 3.3.3
                          j_cnt = j_cnt+1;
                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
@@ -227,4 +227,6 @@ else
          %% END - Add active DXL
     end
 end
-    
+
+
+[g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
