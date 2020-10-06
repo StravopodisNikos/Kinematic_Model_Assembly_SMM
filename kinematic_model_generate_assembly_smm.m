@@ -127,7 +127,7 @@ else
          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
          figure(RefFig);
          drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
+         [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          figure(RefFig); xi_graph = drawtwist(xi_a2_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, g_s_m_i1_new);
          %% END - Add active DXL
@@ -221,7 +221,7 @@ else
          %% START - Add active DXL
          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
+         [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          figure(RefFig); xi_graph = drawtwist(xi_a3_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a3_0, g_s_m_i1_new);
          %% END - Add active DXL
@@ -229,7 +229,7 @@ else
 end
 
 % SET configuration and anatomy of assembled structure
-qa = [0.5 1 0.1]'; qp = [0 0 0 0]';
+qa = [0.5 1 0.1]'; qp = [1 -1 1 -1]';
 % POE FORWARD KINEMATICS
 [g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
 
