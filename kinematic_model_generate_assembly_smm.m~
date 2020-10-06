@@ -25,7 +25,7 @@ addpath('/home/nikos/matlab_ws/screw_dynamics')
 
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
-
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
 clear;
 close all;
 
@@ -44,10 +44,10 @@ passive_back_string_notation = '31';
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_back_string_notation;
+structure(3,:) = passive_under_string_notation;
 structure(4,:) = fixed_active_string_notation;
 structure(5,:) = passive_under_string_notation;
-structure(6,:) = passive_back_string_notation;
+structure(6,:) = passive_under_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
 %% Active-Passive counters
@@ -127,7 +127,7 @@ else
          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
          figure(RefFig);
          drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
+         [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          figure(RefFig); xi_graph = drawtwist(xi_a2_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, g_s_m_i1_new);
          %% END - Add active DXL
@@ -221,12 +221,18 @@ else
          %% START - Add active DXL
          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
+         [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          figure(RefFig); xi_graph = drawtwist(xi_a3_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a3_0, g_s_m_i1_new);
          %% END - Add active DXL
     end
 end
 
+% SET configuration and anatomy of assembled structure => must agree with 
+qa = [0.5 1 0.1]'; qp = [1 -1 1 -1]';
+% POE FORWARD KINEMATICS
+[g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
 
-[g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
+figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); hold on;
+figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;

@@ -1,8 +1,14 @@
-function [g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+function [g_ai,g_pj,Jsp,Jbd] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+
+% Given the extracted(from optimization) structure it computes the forward
+% kinematics tfs and Spatial Jacobian of the SMM.
 
 nDoF = size(xi_ai_ref,2);           % determine total number of active joints by number of columns
 nPseudo = size(xi_pj_ref,2);        % determine total number of passive joints by number of columns
 nAssemblyParts = size(structure,1);
+
+% preallocate memory
+Jsp = zeros(6,nDoF);
 
 % Compute exponentials
 for i_cnt=1:nDoF
@@ -38,11 +44,17 @@ for assembly_part_cnt=1:nAssemblyParts
             
             i_cnt = i_cnt +1;
             
+            % For fwd kin
             g_ai(:,:,i_cnt) = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
+            
+            % For Spatial Jacobian
+            g_for_sp = g_ai_last * exp_pj_interm_last;
+            
+            [Jsp(:,i_cnt)] = calculateSpatialJacobianColumns(xi_ai_ref,g_for_sp,i_cnt);
             
             interm_cnt = 0;             
         case 'x9' % nothing here
-            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4);
+            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4); % works only when in 2nd string position of link
             
         case '21' % add passive exponential
             j_cnt = j_cnt + 1;
@@ -56,7 +68,14 @@ for assembly_part_cnt=1:nAssemblyParts
             
             exp_pj_interm(:,:,interm_cnt) = exp_pj_interm_last * exp_pj(:,:,j_cnt);
             
-            %g_pj(:,:,j_cnt) = g_pj(:,:,j_cnt) * exp_pj(:,:,i_cnt) * g_pj_ref(:,:,j_cnt);
+            if i_cnt == 1
+                g_ai_last = g_ai(:,:,i_cnt);
+            else
+                g_ai_last = g_ai(:,:,i_cnt) * inv(g_ai_ref(:,:,i_cnt));
+            end                
+            
+            g_pj(:,:,j_cnt) = g_ai_last * exp_pj_interm(:,:,interm_cnt) * g_pj_ref(:,:,j_cnt);
+            
         case '31' % add passive exponential
             j_cnt = j_cnt + 1;
             if interm_cnt==0    %previous was active
@@ -69,7 +88,13 @@ for assembly_part_cnt=1:nAssemblyParts
             
             exp_pj_interm(:,:,interm_cnt) = exp_pj_interm_last * exp_pj(:,:,j_cnt);
             
-            %g_pj(:,:,j_cnt) = g_pj(:,:,j_cnt) * exp_pj(:,:,i_cnt) * g_pj_ref(:,:,j_cnt);            
+            if i_cnt == 1
+                g_ai_last = g_ai(:,:,i_cnt);
+            else
+                g_ai_last = g_ai(:,:,i_cnt) * inv(g_ai_ref(:,:,i_cnt));
+            end                
+            
+            g_pj(:,:,j_cnt) = g_ai_last * exp_pj_interm(:,:,interm_cnt) * g_pj_ref(:,:,j_cnt);          
     end
 end
 

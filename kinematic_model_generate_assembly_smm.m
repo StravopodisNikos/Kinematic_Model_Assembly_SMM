@@ -44,7 +44,7 @@ passive_back_string_notation = '31';
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_back_string_notation;
+structure(3,:) = no_passive_string_notation;
 structure(4,:) = fixed_active_string_notation;
 structure(5,:) = passive_under_string_notation;
 structure(6,:) = passive_back_string_notation;
@@ -228,10 +228,11 @@ else
     end
 end
 
-% SET configuration and anatomy of assembled structure
-qa = [0.5 1 0.1]'; qp = [1 -1 1 -1]';
+% SET configuration and anatomy of assembled structure => must agree with 
+qa = [0.5 1 0.1]'; qp = [1 -1 1]';
 % POE FORWARD KINEMATICS
-[g_ai,g_pj] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
+[g_ai,g_pj,Jsp] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
 
 [TestFig] = visualize_robot_urdf(robotURDFfile,qa);
-figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); hold on; 
+figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); hold on; xi_a2_graph = drawtwist(Jsp(:,2)); xi_a3_graph = drawtwist(Jsp(:,3));
+figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; %drawframe(g_pj(:,:,4),0.15); hold on;
