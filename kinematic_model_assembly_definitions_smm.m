@@ -13,11 +13,11 @@ addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
 addpath('/home/nikos/matlab_ws/screw_dynamics')
 
 % Only for test: Get robot urdf
-robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
-
-[RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
-
-[RefRobot_links,CoM_RefRobot_links,gsli0,gsbj0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(RefRobot,RefConfig,NumDoF);
+% robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
+% 
+% [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
+% 
+% [RefRobot_links,CoM_RefRobot_links,gsli0,gsbj0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(RefRobot,RefConfig,NumDoF);
 
 %% Create SB of assembly parts
 
@@ -38,8 +38,8 @@ pseudo_module_URDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_S
 [pseudo_module_links,CoM_pseudo_module_links,g_k_lj_0,g_k_bj_0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(pseudo_module_Robot,pseudo_module_Config,pseudo_module_NumDoF);
 
 wp_j_0 = [1 0 0]';
-PseudoConnectorja = char(pseudo_module_Robot.BodyNames(2));
-PseudoConnectorjb = char(pseudo_module_Robot.BodyNames(3));
+PseudoConnectorja = char(pseudo_module_Robot.BodyNames(1));
+PseudoConnectorjb = char(pseudo_module_Robot.BodyNames(2));
 g_s_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config, PseudoConnectorjb); % pseudo tf with respect to {S}
 g_k_pj_0 = getTransform(pseudo_module_Robot, pseudo_module_Config,PseudoConnectorjb, PseudoConnectorja);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 % g_k_lj_0 = [];% the tf from CoM of pseudo module to the {k_j} frame (origin) of the module
