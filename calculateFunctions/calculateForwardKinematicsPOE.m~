@@ -1,7 +1,7 @@
-function [g_ai,g_pj,Jsp,Jbd] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+function [g_ai,g_pj,Jsp,Pi] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
 
 % Given the extracted(from optimization) structure it computes the forward
-% kinematics tfs and Jacobians of the SMM.
+% kinematics tfs and Spatial Jacobian of the SMM.
 
 nDoF = size(xi_ai_ref,2);           % determine total number of active joints by number of columns
 nPseudo = size(xi_pj_ref,2);        % determine total number of passive joints by number of columns
@@ -9,7 +9,6 @@ nAssemblyParts = size(structure,1);
 
 % preallocate memory
 Jsp = zeros(6,nDoF);
-Jbd = zeros(6,nDoF);
 
 % Compute exponentials
 for i_cnt=1:nDoF
@@ -45,15 +44,20 @@ for assembly_part_cnt=1:nAssemblyParts
             
             i_cnt = i_cnt +1;
             
+            % For fwd kin
             g_ai(:,:,i_cnt) = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
             
+            % For Spatial Jacobian Jsp
             g_for_sp = g_ai_last * exp_pj_interm_last;
             
-            [Jsp_i_column,Jbd_i_column] = calculateSpatialBodyJacobianColumns(xi_ai_ref,xi_pj_ref,g_for_sp,g_for_bd,g_st_0,i_cnt)
+            [Jsp(:,i_cnt)] = calculateSpatialJacobianColumns(xi_ai_ref,g_for_sp,i_cnt);
+            
+            % for Pseudo Exponentials Product Pi
+            A(:,:,i_cnt) = g_ai_ref(:,:,i_cnt) * inv(g_ai(:,:,i_cnt));  
             
             interm_cnt = 0;             
         case 'x9' % nothing here
-            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4);
+            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4); % works only when in 2nd string position of link
             
         case '21' % add passive exponential
             j_cnt = j_cnt + 1;
@@ -96,5 +100,10 @@ for assembly_part_cnt=1:nAssemblyParts
             g_pj(:,:,j_cnt) = g_ai_last * exp_pj_interm(:,:,interm_cnt) * g_pj_ref(:,:,j_cnt);          
     end
 end
+
+% Now that structure is evaluated the PseudoExponentialproduct can be
+% extracted
+
+[P_i_i1] = calculatePseudoExponentialsProduct(A_i,A_i1,xi_ai_ref_i1, qa_i1)
 
 end

@@ -1,4 +1,4 @@
-function [g_ai,g_pj,Jsp,Jbd] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+function [g_ai,g_pj,Jsp,P_i_i1] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
 
 % Given the extracted(from optimization) structure it computes the forward
 % kinematics tfs and Spatial Jacobian of the SMM.
@@ -47,10 +47,16 @@ for assembly_part_cnt=1:nAssemblyParts
             % For fwd kin
             g_ai(:,:,i_cnt) = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
             
-            % For Spatial Jacobian
+            % For Spatial Jacobian Jsp
             g_for_sp = g_ai_last * exp_pj_interm_last;
             
             [Jsp(:,i_cnt)] = calculateSpatialJacobianColumns(xi_ai_ref,g_for_sp,i_cnt);
+            
+            % for Pseudo Exponentials Product Pi
+            A(:,:,i_cnt) = g_ai_ref(:,:,i_cnt) * inv(g_ai(:,:,i_cnt));
+            if i_cnt~=1
+                P_i_i1(:,:,i_cnt-1) = exp_pj_interm_last;
+            end
             
             interm_cnt = 0;             
         case 'x9' % nothing here
@@ -97,5 +103,12 @@ for assembly_part_cnt=1:nAssemblyParts
             g_pj(:,:,j_cnt) = g_ai_last * exp_pj_interm(:,:,interm_cnt) * g_pj_ref(:,:,j_cnt);          
     end
 end
+
+% Now that structure is evaluated the PseudoExponentialproduct can be
+% extracted(already inside switch statements!)
+% for pi_cnt=1:(i_cnt-1)
+%     [P_i_i1_b(:,:,pi_cnt)] = calculatePseudoExponentialsProduct(A(:,:,pi_cnt),A(:,:,pi_cnt+1),xi_ai_ref(:,pi_cnt+1), qa(pi_cnt+1));
+%     P_i_i1_b(:,:,pi_cnt)-P_i_i1(:,:,pi_cnt)
+% end
 
 end
