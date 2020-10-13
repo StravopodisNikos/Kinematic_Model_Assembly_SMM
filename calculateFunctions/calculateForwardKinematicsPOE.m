@@ -60,8 +60,12 @@ for assembly_part_cnt=1:nAssemblyParts
             
             interm_cnt = 0;             
         case 'x9' % nothing here
-            exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4); % works only when in 2nd string position of link
-            
+            if interm_cnt==0
+                exp_pj_interm(:,:,interm_cnt+1) = eye(4); %does nothing
+            else
+                exp_pj_interm(:,:,interm_cnt) = exp_pj_interm(:,:,interm_cnt) * eye(4); % works only when in 2nd string position of link
+            end
+                
         case '21' % add passive exponential
             j_cnt = j_cnt + 1;
             if interm_cnt==0    %previous was active

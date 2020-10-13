@@ -44,9 +44,9 @@ passive_back_string_notation = '31';
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_under_string_notation;
+structure(3,:) = passive_back_string_notation;
 structure(4,:) = fixed_active_string_notation;
-structure(5,:) = passive_under_string_notation;
+structure(5,:) = no_passive_string_notation;
 structure(6,:) = passive_under_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
@@ -318,11 +318,11 @@ end
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
 % xacro file that built urdf
-qa = [0 0 0]'; qp = [1 0 1 0]';
+qa = [0 0 0]'; qp = [0 1 0 0]';
 %[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
 [g_ai,g_pj,Jsp,Pi] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref);
 figure(RefFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); hold on; xi_a2_graph = drawtwist(Jsp(:,2)); hold on; xi_a3_graph = drawtwist(Jsp(:,3)); hold on;
-figure(RefFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
+figure(RefFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); % hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
 
 % 2.EXTRACT INERTIAS FOR GIVEN STRUCTURE @ REFERENCE ANATOMY
 % Evaluate calculated Link Inertias(works fine)
@@ -336,5 +336,6 @@ figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1
 [M_b_link_as] = calculateMetalinkInertiaMatrixBody(g_s_link_as,M_s_link_as);
 % 3.CONSTRUCT LINK BODY JACOBIANS ANG GENERALIZED INERTIA MATRIX
 [J_b_sli] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
-[M_b] = calculateGIM(J_b_sli,M_b_link_as);
+[M_b] = calculateGIM(J_b_sli,M_b_link_as); %
 M_b_matlab = massMatrix(RefRobot,qa);
+
