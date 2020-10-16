@@ -1,4 +1,4 @@
-function [g_ai,g_pj,Jsp,P_i_i1] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref)
+function [g_ai,g_pj,Jsp,P_i_i1,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0)
 
 % Given the extracted(from optimization) structure it computes the forward
 % kinematics tfs and Spatial Jacobian of the SMM.
@@ -47,6 +47,10 @@ for assembly_part_cnt=1:nAssemblyParts
             % For fwd kin
             g_ai(:,:,i_cnt) = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * g_ai_ref(:,:,i_cnt);
             
+            if i_cnt==nDoF % finished last active joint tf
+                gst = g_ai_last * exp_pj_interm_last * exp_ai(:,:,i_cnt) * gst0;
+            end
+                
             % For Spatial Jacobian Jsp
             g_for_sp = g_ai_last * exp_pj_interm_last;
             

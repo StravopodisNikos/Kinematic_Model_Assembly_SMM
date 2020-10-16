@@ -5,14 +5,14 @@ function [synthetic_tform,g_s_m_i1,error_msg] = add_synthetic_joint_tf(synthetic
 % Next parameters are defined in assembly_parameters_for_ovidius_robot.yaml
 % ==================================================
 % -------> OPTIMIZATION ASSEMBLY PARAMETERS <-------
-synthetic2_origin_x = 0;   %var \in [-0.075 ~ 0.025]
+synthetic2_origin_x = -0.025;   %var \in [-0.075 ~ 0.025]
 synthetic2_origin_p = 0;   %var \in [-1.5708 ~ 1.5708]
-synthetic3_origin_x = -0.015;   %var \in [-0.055~-0.025]
-synthetic3_origin_z = 0;    %var \in [-0.05~0.05]
-synthetic3_origin_p = 0;   %var \in [-1.5708 ~ 1.5708]
+synthetic3_origin_x = -0.035;   %var \in [-0.055~-0.025]
+synthetic3_origin_z = 0.025;    %var \in [-0.05~0.05]
+synthetic3_origin_p = -1.5708;   %var \in [-1.5708 ~ 1.5708]
 synthetic4_origin_x = 0;        %var \in [-0.025 ~ 0.025]
-synthetic4_origin_p = 1.5708;   %var \in [-1.5708 ~ 1.5708]
-synthetic5_origin_z = 0.015;   %var \in [-0.015~0.025]
+synthetic4_origin_p = -1.5708;   %var \in [-1.5708 ~ 1.5708]
+synthetic5_origin_z = 0;   %var \in [-0.015~0.025]
 synthetic5_origin_p = 0;        %var \in [-1.5708 ~ 1.5708]
 % ==================================================
 
@@ -30,7 +30,7 @@ switch synthetic_name
 
     case 'synthetic2'   % pseudo_moving->pseudo_static_under
         syn2_rpy = [0 synthetic2_origin_p 0];
-        syn2_xyz = [synthetic2_origin_x 0.1444 0]';
+        syn2_xyz = [synthetic2_origin_x 0.1444 -0.05]';
 
         synthetic_Rot_tf = rotz(syn2_rpy(3))*roty(syn2_rpy(2))*rotx(syn2_rpy(1));
         [wmega_Rsyn, theta_Rsyn] = rotparam(synthetic_Rot_tf);
