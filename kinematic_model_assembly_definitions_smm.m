@@ -13,11 +13,11 @@ addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
 addpath('/home/nikos/matlab_ws/screw_dynamics')
 
 % Only for test: Get robot urdf
-% robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
-% 
-% [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
-% 
-% [RefRobot_links,CoM_RefRobot_links,gsli0,gsbj0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(RefRobot,RefConfig,NumDoF);
+robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
+
+[RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
+
+[RefRobot_links,CoM_RefRobot_links,gsli0,gsbj0,M0b_CoM,M0s_CoM] = robot_links_subtree_new(RefRobot,RefConfig,NumDoF);
 
 %% Create SB of assembly parts
 
@@ -60,6 +60,7 @@ Active_Module_b_1 = char(RefRobot.BodyNames(7));
 g_s_a_b_1_0 = getTransform(RefRobot, RefConfig, Active_Module_b_1);
 g_k_ai_0 = getTransform(RefRobot, RefConfig,Active_Module_b_1, Active_Module_a_1);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
 
+figure; show(RefRobot,[0 1 1]');
 %% Synthetic joints tfs with
 syn1_rpy = [0 0 0];
 syn1_xyz = [0 0 0.048]';
