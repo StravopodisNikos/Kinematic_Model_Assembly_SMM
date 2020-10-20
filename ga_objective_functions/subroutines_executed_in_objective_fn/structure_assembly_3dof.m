@@ -76,7 +76,8 @@ else
     else
         
          %% START - Add active DXL
-         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new);
+         active_assembly_index = 2;
+         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
          [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          
          i_bodies = i_bodies +1; % increased counter for body count inside metalink
@@ -200,7 +201,8 @@ else
     else
          
          %% START - Add active DXL
-         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new);
+         active_assembly_index = 3;
+         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
          [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
          
          i_bodies = i_bodies +1; % increased counter for body count inside metalink

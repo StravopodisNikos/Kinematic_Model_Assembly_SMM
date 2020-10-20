@@ -1,4 +1,4 @@
-function [g_ai,g_pj,Jsp,P_i_i1,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0)
+function g_s_li] = calculate_CoM_fwd_kin(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_s_li_ref)
 
 % Given the extracted(from optimization) structure it computes the forward
 % kinematics tfs and Spatial Jacobian of the SMM.
@@ -6,9 +6,6 @@ function [g_ai,g_pj,Jsp,P_i_i1,gst] = calculateForwardKinematicsPOE(structure,xi
 nDoF = size(xi_ai_ref,2);           % determine total number of active joints by number of columns
 nPseudo = size(xi_pj_ref,2);        % determine total number of passive joints by number of columns
 nAssemblyParts = size(structure,1);
-
-% preallocate memory
-Jsp = zeros(6,nDoF);
 
 % Compute exponentials
 for i_cnt=1:nDoF

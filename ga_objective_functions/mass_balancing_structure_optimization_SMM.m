@@ -34,7 +34,14 @@ assembly_parameters(4,3) = x(14);                   % 2nd dxl assembly pitch par
 %% II. Structure assembly
 [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_3dof(structure,assembly_parameters);
 
+if wrong_string_structure
+    MB_star = 10000000;
+end
+
+% II.1 FWD KINEMATICS @ Reference Anatomy and configuration
+[g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
 %% III. Compute CoMi of metamorphic links
+[g_s_link_as,M_s_link_as] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
 
 %% IV. MBS  @ Reference Anatomy
 
