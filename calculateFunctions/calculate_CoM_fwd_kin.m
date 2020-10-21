@@ -25,8 +25,8 @@ i_cnt = 0;
 j_cnt = 0;
 interm_cnt = 0;
 exp_pj_interm(:,:,1) = eye(4);
-g_pj(:,:,1) = eye(4);
 g_ai(:,:,1) = eye(4);
+g_s_li(:,:,1) = eye(4);
 
 for assembly_part_cnt=1:nAssemblyParts
     

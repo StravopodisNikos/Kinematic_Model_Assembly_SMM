@@ -25,20 +25,16 @@ end
 % Based on equations for Jbsli @ p.168 Murray
 for i_cnt=1:nDoF
     if i_cnt==1
-        J_b_sli(:,1,i_cnt) = inv(ad(exp_ai(:,:,1)*Pi_i1(:,:,i_cnt)*g_sli_ref(:,:,1)))*xi_ai_ref(:,1);
-        
-        g_s_li(:,:,i_cnt) = exp_ai(:,:,1)*Pi_i1(:,:,i_cnt)*g_sli_ref(:,:,1);
+        J_b_sli(:,1,i_cnt) = inv(ad(exp_ai(:,:,1)*g_sli_ref(:,:,1)))*xi_ai_ref(:,1);
+        G1 = exp_ai(:,:,1)*g_sli_ref(:,:,1);
+        g_s_li(:,:,i_cnt) = G1 * 
     elseif i_cnt==2
-        J_b_sli(:,1,i_cnt) = inv(ad(exp_ai(:,:,1)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,2)*Pi_i1(:,:,i_cnt)*g_sli_ref(:,:,2)))*xi_ai_ref(:,1);
-        J_b_sli(:,2,i_cnt) = inv(ad(exp_ai(:,:,2)*Pi_i1(:,:,i_cnt)*g_sli_ref(:,:,2)))*xi_ai_ref(:,2);
-        
-        g_s_li(:,:,i_cnt) = exp_ai(:,:,1)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,2)*Pi_i1(:,:,i_cnt)*g_sli_ref(:,:,2);
+        J_b_sli(:,1,i_cnt) = inv(ad(exp_ai(:,:,1)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,2)*g_sli_ref(:,:,2)))*xi_ai_ref(:,1);
+        J_b_sli(:,2,i_cnt) = inv(ad(exp_ai(:,:,2)*g_sli_ref(:,:,2)))*xi_ai_ref(:,2);
     elseif i_cnt==3
         J_b_sli(:,1,i_cnt) = inv(ad(exp_ai(:,:,1)*Pi_i1(:,:,i_cnt-2)*exp_ai(:,:,2)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,3)*g_sli_ref(:,:,3)))*xi_ai_ref(:,1);
         J_b_sli(:,2,i_cnt) = inv(ad(exp_ai(:,:,2)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,3)*g_sli_ref(:,:,3)))*xi_ai_ref(:,2); 
         J_b_sli(:,3,i_cnt) = inv(ad(exp_ai(:,:,3)*g_sli_ref(:,:,3)))*xi_ai_ref(:,3); 
-        
-        g_s_li(:,:,i_cnt) = exp_ai(:,:,1)*Pi_i1(:,:,i_cnt-2)*exp_ai(:,:,2)*Pi_i1(:,:,i_cnt-1)*exp_ai(:,:,3)*g_sli_ref(:,:,3);
     else
          warning('[SMM CALCULATE BODY JACOBIANS]: IMPLEMENTED ONLY FOR 3 DoF STRUCTURE')
     end

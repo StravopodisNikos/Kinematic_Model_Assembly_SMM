@@ -326,12 +326,12 @@ end
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
 % xacro file that built urdf
-qa = [0 0 0]'; qp = [1  1 1 -1]';
+qa = [0 0 0]'; qp = [1.5708 0 1.5708 0]';
 TestFig = figure; show(RefRobot,qa); hold on;
 %[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
 [g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
 figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); drawframe(gst,0.15); hold on; hold on; xi_a2_graph = drawtwist(Jsp(:,2)); hold on; xi_a3_graph = drawtwist(Jsp(:,3)); hold on;
-figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); % hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
+figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
 % save('ikp_test_for_babis.mat','structure','qp','xi_ai_ref','xi_pj_ref','g_ai_ref','g_pj_ref','gst0')
 
 % 2.EXTRACT INERTIAS FOR GIVEN STRUCTURE @ REFERENCE ANATOMY
@@ -342,13 +342,13 @@ figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1
 figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),'p','filled'); hold on;
 
 % 3.Check mass balancing function
-[MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,M_s_link_as,Jsp,qp,TestFig);
+[MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,g_pj_ref,gst0,M_s_link_as,qp,TestFig);
 
 % 4.Now that metalinks COM were found the Metalink Inertia Matrix|Body frame
 % is found
 [M_b_link_as] = calculateMetalinkInertiaMatrixBody(g_s_link_as,M_s_link_as);
 % 5.CONSTRUCT LINK BODY JACOBIANS ANG GENERALIZED INERTIA MATRIX
-[J_b_sli] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
+[J_b_sli,g_s_link_as] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
 [M_b] = calculateGIM(J_b_sli,M_b_link_as); %
 M_b_matlab = massMatrix(RefRobot,qa);
 
