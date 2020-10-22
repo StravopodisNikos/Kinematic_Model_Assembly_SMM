@@ -1,4 +1,4 @@
-function MB_star = mass_balancing_structure_optimization_SMM(x)
+function MB_star = obj_fn_mass_balancing_structure_optimization_SMM(x)
 % x: structure definition-parameterization chromosome
 % Chromosome x is uilt considering the smm structure building principles
 % defined and the parameters given in the corresponding xacro file used for
@@ -10,6 +10,8 @@ function MB_star = mass_balancing_structure_optimization_SMM(x)
 % x10-12 = 2nd pseudo of 2nd metalink parameters
 % x13 = 1st dxl assembly pitch parameter
 % x14 = 2nd dxl assembly pitch parameter
+
+terminate_ga_obj_fn = false;    % used to control ga
 
 %% I.  Assign structure parameters values
 logical wrong_string_structure;
@@ -33,13 +35,38 @@ assembly_parameters(4,3) = x(14);                   % 2nd dxl assembly pitch par
 
 %% II. Structure assembly
 [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_3dof(structure,assembly_parameters);
-%% III. Compute CoMi, ξai
+
+if wrong_string_structure
+    MB_star = 10000000;
+    terminate_ga_obj_fn = true;
+end
+
+if terminate_ga_obj_fn==false
+    
+% II.1 FWD KINEMATICS @ Reference Anatomy and configuration
+% nDoF = size(xi_ai_ref,2);
+nPseudo = size(xi_pj_ref,2); 
+
+% qa = zeros(nDoF,1);     % Reference Configuration
+qp = zeros(nPseudo,1);  % Reference Anatomy
+%[~,~,~,Pi_i1_ref,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
+
+%% III. Compute CoMi and Ms,Mb of metamorphic links @ Reference Anatomy
+[g_s_link_as_ref,M_s_link_as_ref] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
+[M_b_link_as_ref] = calculateMetalinkInertiaMatrixBody(g_s_link_as_ref,M_s_link_as_ref);
 
 %% IV. MBS  @ Reference Anatomy
+MBS_ref = calculateMBS_no_graph(structure,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref,qp);
 
 %% V. GDCI  @ Reference Anatomy
+DCI_star_ref = calculateGlobalMinDCI1_3DoF(xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref);
 
-%% VI. Anatomy Richness
+%% VI. Anatomy Richness - Here starts anatomy exhaustive calculation
+[F_i_rich] = calculateExhaustiveAnatomies_for_MBS(MBS_ref,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref);
 
 %% V. Final structure score
+MB_star = DCI_star_ref/F_i_rich;
+
+end
+
 end

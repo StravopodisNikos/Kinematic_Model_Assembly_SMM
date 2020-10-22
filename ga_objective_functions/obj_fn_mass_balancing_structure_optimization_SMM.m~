@@ -1,4 +1,4 @@
-function MB_star = mass_balancing_structure_optimization_SMM(x)
+function MB_star = obj_fn_mass_balancing_structure_optimization_SMM(x)
 % x: structure definition-parameterization chromosome
 % Chromosome x is uilt considering the smm structure building principles
 % defined and the parameters given in the corresponding xacro file used for
@@ -39,15 +39,20 @@ if wrong_string_structure
 end
 
 % II.1 FWD KINEMATICS @ Reference Anatomy and configuration
-[g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
-%% III. Compute CoMi of metamorphic links
-[g_s_link_as,M_s_link_as] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
+%[~,~,~,Pi_i1,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
+
+%% III. Compute CoMi and Ms,Mb of metamorphic links @ Reference Anatomy
+[g_s_link_as_ref,M_s_link_as_ref] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
+[M_b_link_as_ref] = calculateMetalinkInertiaMatrixBody(g_s_link_as_ref,M_s_link_as_ref);
 
 %% IV. MBS  @ Reference Anatomy
+MBS = calculateMBS_no_graph(structure,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref,qp);
 
 %% V. GDCI  @ Reference Anatomy
+DCI_star = calculateGlobalMinDCI1_3DoF(xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref);
 
 %% VI. Anatomy Richness
 
 %% V. Final structure score
+MB_star = ;
 end
