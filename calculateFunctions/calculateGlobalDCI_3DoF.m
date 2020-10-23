@@ -1,15 +1,25 @@
-function DCI_star = calculateGlobalMinDCI1_3DoF(xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref)
+function DCI_star = calculateGlobalDCI_3DoF(min_max_select,diag_select,xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref)
 % This matlab code was copied from moul2 PC on Th. 22.10.20
 
-% Function that returns min(DCI) in each active C-space
+% Function that returns min||max Global(DCI) in each active C-space
 
-wx = [0 0 0 1 1 1]; % for off diagonal elements
+wrong_selection = false;
+
+switch diag_select 
+    case 'offdiag'
+        wx = [0 0 0 1 1 1]; % for off diagonal elements
+    case 'diag'
+        wx = [1 1 1 0 0 0]; % for diagonal elements
+    otherwise
+        wrong_selection = true;
+end
 
 %% Ovidius robot properties
 active_angle_limit(1) = 2; % [rad]
 active_angle_limit(2) = 2; % [rad]
 active_angle_limit(3) = 2; % [rad]
-
+step_a2 = 0.25;
+step_a3 = 0.25;
 %% I.a. Definition of Configuration Space of first 3DoF
 Cspace_count = 0;
 
@@ -32,5 +42,18 @@ for ta2=-active_angle_limit(2):step_a2:active_angle_limit(2)
         end
 end
 
-DCI_star = min(DCI);
+switch min_max_select 
+    case 'min'
+        DCI_star = min(DCI);
+    case 'max'
+        DCI_star = max(DCI);
+    otherwise
+        wrong_selection = true;
+end
+
+if wrong_selection == true
+    DCI_star = 0;
+    warning('WRONG SELECTION INPUT! DCI SET TO 0! MUST ABORT')
+end
+
 end

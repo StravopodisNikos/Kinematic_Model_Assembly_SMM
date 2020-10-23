@@ -1,11 +1,11 @@
-function [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(MBS_ref,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref)
+function [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,MBS_ref,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref)
 % Calculates all possible anatomies given the total number of pseudos and
 % the known pseudo step angle. Evaluates the richness of a structure, w.r.t the Mass Balancing Score
 
 % Thanks to Jos (10584) for allcomb.m code.
 % Downloaded from MAthWorks File Exchange @ : https://www.mathworks.com/matlabcentral/fileexchange/10064-allcomb-varargin
 
-pseudo_step_angle = deg2rad(15);
+pseudo_step_angle = deg2rad(45);
 pseudo_limit_angle = pi/2;
 nPseudo = size(xi_pj_ref,2);
 % OLA LATHOS
@@ -20,7 +20,14 @@ for pseudo_cnt=1:nPseudo
     end
 end
 
-all_possible_anatomies = allcomb(qp(:,1),qp(:,2),qp(:,3));  % each row of the array is a possible anatomy
+if nPseudo == 2
+    all_possible_anatomies = allcomb(qp(:,1),qp(:,2));  % each row of the array is a possible anatomy
+elseif nPseudo == 3
+    all_possible_anatomies = allcomb(qp(:,1),qp(:,2),qp(:,3));  % each row of the array is a possible anatomy
+elseif nPseudo == 4
+    all_possible_anatomies = allcomb(qp(:,1),qp(:,2),qp(:,3),qp(:,4));  % each row of the array is a possible anatomy
+end
+
 total_possible_anatomies = size(all_possible_anatomies,1);  
 
 %% Evaluate each anatomy

@@ -5,9 +5,17 @@ function [synthetic_tform,g_s_m_i1,error_msg] = add_synthetic_joint_tf_for_ga(sy
 % synthetic_tf
 
 % -------> OPTIMIZATION ASSEMBLY PARAMETERS ARE NOW GIVEN FROM GA!  <-------
-synthetic_origin_xzp = assembly_parameters(assembly_index,:);
+switch synthetic_name
+    case 'synthetic1'
+        % junk 0 value must be passed since synthetic1 params are default
+        synthetic_origin_xzp = assembly_index; 
 
-active2pseudo_origin_p = assembly_parameters(4,assembly_index);
+        active2pseudo_origin_p = assembly_index;
+    otherwise
+        synthetic_origin_xzp = assembly_parameters(assembly_index,:);
+
+        active2pseudo_origin_p = assembly_parameters(4,assembly_index);
+end
 % ==================================================
 
 switch synthetic_name

@@ -4,6 +4,8 @@ function [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wro
 % Generates active-passive twists and joints-tcp frame tfs of assembled
 % robot
 
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM')
+
 % Input  -> structure:  7x2 string array
 % Output -> 
 %% Active-Passive joints counters, number of bodies inside each link
@@ -11,6 +13,12 @@ i_cnt = 0;
 j_cnt = 0;
 i_bodies = 0;
 %% Build structure using the rules specified
+logical wrong_string_structure;
+fixed_active_string_notation = 'x0';
+no_passive_string_notation = 'x9';    % -> in ga Int Value:1
+passive_under_string_notation = '21'; % -> in ga Int Value:2
+passive_back_string_notation = '31';  % -> in ga Int Value:3
+
 wrong_string_structure = false;                     % assumes initial string is correct
 if ~(strcmp(structure(1,:),fixed_active_string_notation)) % if 1st string element is NOT active
     wrong_string_structure = true;
@@ -30,7 +38,8 @@ else
     switch structure(2,:) % first switch for 1st element         
         case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface             
              j_cnt = j_cnt+1;
-             [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic1',g_s_m_i1_new);
+             pseudo_assembly_index = 0;
+             [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic1',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
              [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
              [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
              
@@ -177,7 +186,6 @@ else
                          
                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new); 
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
                     case passive_back_string_notation   % case 3.3.3
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3;

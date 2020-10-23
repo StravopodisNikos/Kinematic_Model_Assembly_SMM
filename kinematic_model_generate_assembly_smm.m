@@ -42,9 +42,9 @@ robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros
 %% Define smm structure string (in optimization it is ga generated!)
 logical wrong_string_structure;
 fixed_active_string_notation = 'x0';
-no_passive_string_notation = 'x9';
-passive_under_string_notation = '21';
-passive_back_string_notation = '31';
+no_passive_string_notation = 'x9';    % -> in ga Int Value:1
+passive_under_string_notation = '21'; % -> in ga Int Value:2
+passive_back_string_notation = '31';  % -> in ga Int Value:3
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;

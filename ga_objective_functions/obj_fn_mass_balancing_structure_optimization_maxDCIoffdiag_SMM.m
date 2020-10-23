@@ -1,4 +1,4 @@
-function MB_star = obj_fn_mass_balancing_structure_optimization_SMM(x)
+function MB_star = obj_fn_mass_balancing_structure_optimization_maxDCIoffdiag_SMM(x)
 % x: structure definition-parameterization chromosome
 % Chromosome x is uilt considering the smm structure building principles
 % defined and the parameters given in the corresponding xacro file used for
@@ -59,7 +59,7 @@ qp = zeros(nPseudo,1);  % Reference Anatomy
 MBS_ref = calculateMBS_no_graph(structure,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref,qp);
 
 %% V. GDCI  @ Reference Anatomy
-DCI_star_ref = calculateGlobalMinDCI1_3DoF(xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref);
+DCI_star_ref = calculateGlobalDCI_3DoF('max','offdiag',xi_ai_ref,Pi_i1,g_s_link_as_ref,M_b_link_as_ref);
 
 %% VI. Anatomy Richness - Here starts anatomy exhaustive calculation
 [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(MBS_ref,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref);
