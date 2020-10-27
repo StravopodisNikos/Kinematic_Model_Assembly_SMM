@@ -28,8 +28,8 @@ close all;
 
 %% Here call ga's
 generations = 500;
-population = 25;
-tolerance = 1e-10;
+population = 100;
+tolerance = 1e-11;
 stall_limit = 50;
 %% 1.Metric with min DCI
 FitnessFunction1 = @(x)obj_fn_mass_balancing_structure_optimization_minDCIoffdiag_SMM(x); 
@@ -46,19 +46,27 @@ UB2 = [3    3    3    0.035    0.020  0.7854  0.025   0.020   0.7854   0.035    
 LB3 = [1    2    1    0.035    0.020  0.7854  0.025   0.020   0.7854   0.035    0.020    0.7854    1.0472  1.0472];
 UB3 = [3    3    3    0.050   0.050   1.5708  0.025   0.050   1.5708   0.050    0.050    1.5708  1.5708   1.5708];
 %% Call ga 
-% for w1=w2=0 use 'FunctionTolerance',1e-13, for w1=w2=1000 use 'FunctionTolerance',1e-5
 options = optimoptions('ga','Generations',generations,'PopulationSize',population,'Display','iter','FunctionTolerance',tolerance,'StallGenLimit',stall_limit,'UseParallel', true, 'UseVectorized', false);
+
+tic
+[X,Fval,Exitflag,Output] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB3,[],IntCon1,options);
+toc
+save('ga_test_26_10_20.mat','generations','population','tolerance','stall_limit','X','Fval','Exitflag','Output')
+
 tic
 [x1,fval1,exitflag1,output1] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],IntCon1,options);
 toc
-% options = optimoptions('ga','Generations',500,'PopulationSize',1000,'Display','iter','FunctionTolerance',1e-7,'StallGenLimit',50,'UseParallel', true, 'UseVectorized', false);
+save('ga_test1_26_10_20.mat','generations','population','tolerance','stall_limit','x1','fval1','exitflag1','output1')
+
 tic
 [x2,fval2,exitflag2,output2] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB2,UB2,[],IntCon1,options);
 toc
-% options = optimoptions('ga','Generations',500,'PopulationSize',1000,'Display','iter','FunctionTolerance',1e-7,'StallGenLimit',50,'UseParallel', true, 'UseVectorized', false);
+save('ga_test2_26_10_20.mat','generations','population','tolerance','stall_limit','x2','fval2','exitflag2','output2')
+
 tic
 [x3,fval3,exitflag3,output3] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB3,UB3,[],IntCon1,options);
 toc
+save('ga_test3_26_10_20.mat','generations','population','tolerance','stall_limit','x3','fval3','exitflag3','output3')
 %% 2.Metric with max DCI
 
 %% 3.Multiobjective with min+max DCI

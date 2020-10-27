@@ -3,8 +3,15 @@ function [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wro
 % kinematic_model_generate_assembly_smm.m
 % Generates active-passive twists and joints-tcp frame tfs of assembled
 % robot
+addpath('/home/nikos/matlab_ws/screw_kinematics_library/screws')
+addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
+addpath('/home/nikos/matlab_ws/screw_dynamics')
 
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
+
 
 % Input  -> structure:  7x2 string array
 % Output -> 
@@ -108,7 +115,7 @@ else
                 switch structure(6,:)
                     case passive_under_string_notation  % case 3.1.1
                          j_cnt = j_cnt+1;
-                         pseudo_assembly_index = 2;
+                         pseudo_assembly_index = 3; % was 2 for 26_10 tests
                          [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic5',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
@@ -117,7 +124,7 @@ else
                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
                     case passive_back_string_notation   % case 3.1.2                                
                          j_cnt = j_cnt+1;
-                         pseudo_assembly_index = 2;
+                         pseudo_assembly_index = 3; % was 2 for 26_10 tests
                          [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic3',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0,  g_s_m_i1_new);

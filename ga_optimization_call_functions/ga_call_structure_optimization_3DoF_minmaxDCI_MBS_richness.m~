@@ -28,9 +28,9 @@ close all;
 
 %% Here call ga's
 generations = 500;
-population = 25;
-tolerance = 1e-10;
-stall_limit = 500;
+population = 100;
+tolerance = 1e-11;
+stall_limit = 50;
 %% 1.Metric with min DCI
 FitnessFunction1 = @(x)obj_fn_mass_balancing_structure_optimization_minDCIoffdiag_SMM(x); 
 
@@ -46,8 +46,11 @@ UB2 = [3    3    3    0.035    0.020  0.7854  0.025   0.020   0.7854   0.035    
 LB3 = [1    2    1    0.035    0.020  0.7854  0.025   0.020   0.7854   0.035    0.020    0.7854    1.0472  1.0472];
 UB3 = [3    3    3    0.050   0.050   1.5708  0.025   0.050   1.5708   0.050    0.050    1.5708  1.5708   1.5708];
 %% Call ga 
-% for w1=w2=0 use 'FunctionTolerance',1e-13, for w1=w2=1000 use 'FunctionTolerance',1e-5
 options = optimoptions('ga','Generations',generations,'PopulationSize',population,'Display','iter','FunctionTolerance',tolerance,'StallGenLimit',stall_limit,'UseParallel', true, 'UseVectorized', false);
+
+tic
+[x,fval,exitflag,output] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB3,[],IntCon1,options);
+toc
 tic
 [x1,fval1,exitflag1,output1] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],IntCon1,options);
 toc

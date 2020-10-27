@@ -8,7 +8,6 @@ function [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,MBS_ref,xi_
 pseudo_step_angle = deg2rad(45);
 pseudo_limit_angle = pi/2;
 nPseudo = size(xi_pj_ref,2);
-% OLA LATHOS
 
 %% Build anatomies in a (n x nPseudo) array, where n is the product of the elements of the pseudojoint angle  vectors(Cartesian Product)
 for pseudo_cnt=1:nPseudo
