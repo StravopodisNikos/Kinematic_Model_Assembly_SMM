@@ -32,6 +32,15 @@ for ga_i_cnt=1:3
         x_s(ga_i_cnt,:) = '31';
     end
 end
+% and for x13,x14
+for ga_i_cnt=13:14
+    if x(ga_i_cnt) == 0
+        x_r(ga_i_cnt) = 0;
+    elseif x(ga_i_cnt) == 1
+        x_r(ga_i_cnt) = 1.5708;
+    end
+end
+
 structure(1,:) = fixed_active_string_notation;      % ALWAYS ACTIVE
 structure(2,:) = passive_under_string_notation;     % FIXED ASSEMBLY FOR 1st pseudo       
 structure(3,:) = x_s(1,:);
@@ -45,8 +54,8 @@ assembly_parameters(1,:) = x(4:6);                  % 2nd pseudo of 1st metalink
 assembly_parameters(2,:) = x(7:9);                  % 1st pseudo of 2nd metalink parameters
 assembly_parameters(3,:) = x(10:12);                % 2nd pseudo of 2nd metalink parameters
 assembly_parameters(4,1) = 0;                       % dummy zero since 1st active joint is fixed
-assembly_parameters(4,2) = x(13);                   % 1st dxl assembly pitch parameter
-assembly_parameters(4,3) = x(14);                   % 2nd dxl assembly pitch parameter    
+assembly_parameters(4,2) = x_r(13);                   % 1st dxl assembly pitch parameter
+assembly_parameters(4,3) = x_r(14);                   % 2nd dxl assembly pitch parameter    
 
 %% II. Structure assembly
 [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_3dof(structure,assembly_parameters);

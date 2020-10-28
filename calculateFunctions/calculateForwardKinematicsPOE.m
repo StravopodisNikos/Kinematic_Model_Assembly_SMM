@@ -57,7 +57,7 @@ for assembly_part_cnt=1:nAssemblyParts
             [Jsp(:,i_cnt)] = calculateSpatialJacobianColumns(xi_ai_ref,g_for_sp,i_cnt);
             
             % for Pseudo Exponentials Product Pi
-            A(:,:,i_cnt) = g_ai_ref(:,:,i_cnt) * inv(g_ai(:,:,i_cnt));
+%             A(:,:,i_cnt) = g_ai_ref(:,:,i_cnt) * inv(g_ai(:,:,i_cnt));
             if i_cnt~=1
                 P_i_i1(:,:,i_cnt-1) = exp_pj_interm_last;
             end

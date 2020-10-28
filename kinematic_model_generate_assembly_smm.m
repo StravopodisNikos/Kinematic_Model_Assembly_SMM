@@ -15,7 +15,7 @@
 % 2. Urdf file is built from xacro file, having set the corresponding
 % parameters in the yaml file
 % >> nikos@syros-b14-nikos-ubuntu:~/PhD/projects/Parametric_Simulation_Model_SMM/xacros$ xacro conditioned_parameterized_SMM_assembly.xacro > generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf
-% 3. structure in l.41-47 is set by user
+% 3. structure in l.49-55 is set by user
 % 4. Run code
 
 % Include libraries
@@ -31,7 +31,7 @@ close all;
 
 %% Only visualization for code evaluation
 % Ref structure robot - All data must be calculated for reference structure
-robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/conditioned_parameterized_SMM_assembly.urdf';
+robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/checkMBSgraph.urdf';
 
 [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
 
@@ -48,9 +48,9 @@ passive_back_string_notation = '31';  % -> in ga Int Value:3
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_back_string_notation;
+structure(3,:) = passive_under_string_notation;
 structure(4,:) = fixed_active_string_notation;
-structure(5,:) = passive_under_string_notation;
+structure(5,:) = passive_back_string_notation;
 structure(6,:) = passive_back_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
@@ -326,7 +326,7 @@ end
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
 % xacro file that built urdf
-qa = [0 0 0]'; qp = [0 0 0 0]';
+qa = [0 0 0]'; qp = [1 1 -0.5 0.5]';
 TestFig = figure; show(RefRobot,qa); hold on;
 %[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
 [g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
@@ -337,9 +337,9 @@ figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.1
 % 2.EXTRACT INERTIAS FOR GIVEN STRUCTURE @ REFERENCE ANATOMY
 % Evaluate calculated Link Inertias(works fine)
 [g_s_link_as,M_s_link_as] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
-figure(RefFig); scatter3(g_s_link_as(1,1,1), g_s_link_as(2,1,1), g_s_link_as(3,1,1),'p','filled'); hold on;
-figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1,2),'p','filled'); hold on;
-figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),'p','filled'); hold on;
+figure(RefFig); scatter3(g_s_link_as(1,1,1), g_s_link_as(2,1,1), g_s_link_as(3,1,1),500,'p','filled'); hold on;
+figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1,2),500,'p','filled'); hold on;
+figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),500,'p','filled'); hold on;
 
 % 3.Check mass balancing function
 [MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,g_pj_ref,gst0,M_s_link_as,qp,TestFig);

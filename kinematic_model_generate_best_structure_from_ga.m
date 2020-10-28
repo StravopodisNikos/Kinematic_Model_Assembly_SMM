@@ -1,6 +1,7 @@
 % This code generates the assembly of the sructure extracted from
 % optimization code run from file:
 % ga_call_structure_optimization_3DoF_minmaxDCI_MBS_richness.m
+% Will be used to visualize and evaluate optimal results
 
 % How to use:
 % 1. First check mat file extracted form ga run
@@ -24,6 +25,6 @@ close all;
 
 %% Only visualization for code evaluation
 % Ref structure robot - All data must be calculated for reference structure
-robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/best_structure_26_10.urdf';
+robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/best_structure_test_27_10.urdf';
 
 [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
