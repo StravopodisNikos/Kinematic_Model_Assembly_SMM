@@ -73,20 +73,20 @@ nPseudo = size(xi_pj_ref,2);
 
 qa = zeros(nDoF,1);     % Reference Configuration
 qp = zeros(nPseudo,1);  % Reference Anatomy
-[~,~,~,Pi_i1_ref,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
+% [~,~,~,Pi_i1_ref,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
 
 %% III. Compute CoMi and Ms,Mb of metamorphic links @ Reference Anatomy
 [g_s_link_as_ref,M_s_link_as_ref] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
 [M_b_link_as_ref] = calculateMetalinkInertiaMatrixBody(g_s_link_as_ref,M_s_link_as_ref);
 
 %% IV. MBS  @ Reference Anatomy
-MBS_ref = calculateMBS_no_graph(structure,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref,qp);
+MBS_ref = calculateMBS_no_graph(structure,assembly_parameters,xi_ai_ref,xi_pj_ref,qp);
 
 %% V. GDCI  @ Reference Anatomy
-DCI_star_ref = calculateGlobalDCI_3DoF('min','offdiag',xi_ai_ref,Pi_i1_ref,g_s_link_as_ref,M_b_link_as_ref);
+DCI_star_ref = calculateGlobalDCI_3DoF('min','offdiag',xi_ai_ref,g_s_link_as_ref,M_b_link_as_ref);
 
 %% VI. Anatomy Richness - Here starts anatomy exhaustive calculation
-[F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,MBS_ref,xi_ai_ref,xi_pj_ref,g_s_link_as_ref,g_ai_ref,g_pj_ref,gst0,M_s_link_as_ref);
+[F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,assembly_parameters,MBS_ref,xi_ai_ref,xi_pj_ref);
 
 %% V. Final structure score
 MB_star = DCI_star_ref/F_i_rich;

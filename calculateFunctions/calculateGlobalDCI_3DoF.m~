@@ -33,9 +33,7 @@ for ta2=-active_angle_limit(2):step_a2:active_angle_limit(2)
             %% I.b. In this configuration(qa1.qa2,qa3) compute GIM
             
             % calculateCoM_BodyJacobians_for_anat is better beacuse works
-            % for all anatomies, but first the g_s_link_as(CoM frame of
-            % each link @ desired anatomy) has to be specified. Here we are
-            % still working on reference, so all is ok(for methodology check: kinematic_model_generate_assembly_smm.m)
+            % for all anatomies, but first the g_s_link_as(CoM frame of each lin)
             [J_b_sli] = calculateCoM_BodyJacobians_for_anat(xi_ai_ref, qa, g_s_link_as_ref );
              
             [M_b] = calculateGIM(J_b_sli,M_b_link_as_ref);

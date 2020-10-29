@@ -363,7 +363,7 @@ figure(TestFig); scatter3(g_s_link_as_anat(1,1,2), g_s_link_as_anat(2,1,2), g_s_
 figure(TestFig); scatter3(g_s_link_as_anat(1,1,3), g_s_link_as_anat(2,1,3), g_s_link_as_anat(3,1,3),500,'p','filled'); hold on;
 figure(TestFig); xi_a2_graph_anat = drawtwist(xi_ai_anat(:,2)); hold on; xi_a3_graph_anat = drawtwist(xi_ai_anat(:,3)); hold on;
 % 3.Check mass balancing function
-% [MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,g_pj_ref,gst0,M_s_link_as,qp,TestFig);
+[MBS] = calculateMBS(structure,assembly_parameters,xi_ai_ref,xi_pj_ref,qp,TestFig);
 
 % 4.Now that metalinks COM were found the Metalink Inertia Matrix|Body frame
 % is found
