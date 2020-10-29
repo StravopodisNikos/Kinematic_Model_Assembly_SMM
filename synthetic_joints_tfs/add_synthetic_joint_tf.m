@@ -7,7 +7,7 @@ function [synthetic_tform,g_s_m_i1,error_msg] = add_synthetic_joint_tf(synthetic
 % -------> OPTIMIZATION ASSEMBLY PARAMETERS <-------
 synthetic2_origin_x = 0;   %var \in [-0.075 ~ 0.025]
 synthetic2_origin_z = -0.03;   %added as var, default -0.05
-synthetic2_origin_p = 0;   %var \in [-1.5708 ~ 1.5708]
+synthetic2_origin_p = 1.5708;   %var \in [-1.5708 ~ 1.5708]
 
 synthetic3_origin_x = -0.035;   %var \in [-0.055~-0.025]
 synthetic3_origin_z = 0;    %var \in [-0.05~0.05]

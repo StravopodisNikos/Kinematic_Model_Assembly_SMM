@@ -15,7 +15,8 @@ qa = zeros(nDoF,1);
 [~,~,Jsp,Pi,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
 
 % [g_s_li] = calculate_CoM_fwd_kin(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_s_link_as);
-[~,g_s_li] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
+% [~,g_s_li] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
+% Here new function that computes gsli for each structure+anatomy
 figure(point2figure); scatter3(g_s_li(1,4,1), g_s_li(2,4,1), g_s_li(3,4,1),500,'p','filled'); hold on;
 figure(point2figure); scatter3(g_s_li(1,4,2), g_s_li(2,4,2), g_s_li(3,4,2),500,'p','filled'); hold on;
 figure(point2figure); scatter3(g_s_li(1,4,3), g_s_li(2,4,3), g_s_li(3,4,3),500,'p','filled'); hold on;

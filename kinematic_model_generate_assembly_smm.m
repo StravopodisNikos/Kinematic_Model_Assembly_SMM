@@ -26,6 +26,8 @@ addpath('/home/nikos/matlab_ws/screw_dynamics')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_objective_functions/subroutines_executed_in_objective_fn')
+
 clear;
 close all;
 
@@ -48,10 +50,10 @@ passive_back_string_notation = '31';  % -> in ga Int Value:3
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_under_string_notation;
+structure(3,:) = passive_back_string_notation;
 structure(4,:) = fixed_active_string_notation;
 structure(5,:) = passive_back_string_notation;
-structure(6,:) = passive_back_string_notation;
+structure(6,:) = passive_under_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
 % Each link Inertia Matrix is constructed as the Sum of the Links Bodies
@@ -326,11 +328,11 @@ end
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
 % xacro file that built urdf
-qa = [0 0 0]'; qp = [1 1 -0.5 0.5]';
+qa = [0 0 0]'; qp = [1.5708 1 -1 1.5708]';
 TestFig = figure; show(RefRobot,qa); hold on;
 %[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
 [g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
-figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); drawframe(gst,0.15); hold on; hold on; xi_a2_graph = drawtwist(Jsp(:,2)); hold on; xi_a3_graph = drawtwist(Jsp(:,3)); hold on;
+figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); drawframe(gst,0.15); hold on; hold on; %xi_a2_graph = drawtwist(Jsp(:,2)); hold on; xi_a3_graph = drawtwist(Jsp(:,3)); hold on;
 figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
 % save('ikp_test_for_babis.mat','structure','qp','xi_ai_ref','xi_pj_ref','g_ai_ref','g_pj_ref','gst0')
 
@@ -341,14 +343,36 @@ figure(RefFig); scatter3(g_s_link_as(1,1,1), g_s_link_as(2,1,1), g_s_link_as(3,1
 figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1,2),500,'p','filled'); hold on;
 figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),500,'p','filled'); hold on;
 
+% 2.1 EXTRACT INERTIAS FOR GIVEN STRUCTURE & ANATOMY(Here the ga fn are checked-parameters must agree!)
+% ================= GA PARAMETERS =================
+%  I.1 Assembly sequence definition -> given in l.49-55
+%  I.2 Assembly parameters ONLY FOR THE STRUCTURE TESTED, must manually
+%  give the same values given the asembly sequence and the values @
+%  assembly_parameters_for_ovidius_robot.yaml
+assembly_parameters(1,:) = [0,-0.03,1.5708]';                  % syn2 bcause 31
+assembly_parameters(2,:) = [-0.035,0,1.5708]';                  % syn3 because 31
+assembly_parameters(3,:) = [0,0,-1.5708]';                % syn4 because 21
+assembly_parameters(4,1) = 0;                       % dummy zero since 1st active joint is fixed
+assembly_parameters(4,2) = 0;                   % 1st dxl assembly pitch parameter
+assembly_parameters(4,3) = 0;                   % 2nd dxl assembly pitch parameter
+% ================= GA PARAMETERS =================
+[gst_anat,xi_ai_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy(structure,assembly_parameters,qp,xi_pj_ref,TestFig);
+[g_s_link_as_anat,M_s_link_as_anat] = calculateCoMmetalinks(M_s_com_k_i_anat,g_s_com_k_i_anat);
+figure(TestFig); scatter3(g_s_link_as_anat(1,1,1), g_s_link_as_anat(2,1,1), g_s_link_as_anat(3,1,1),500,'p','filled'); hold on;
+figure(TestFig); scatter3(g_s_link_as_anat(1,1,2), g_s_link_as_anat(2,1,2), g_s_link_as_anat(3,1,2),500,'p','filled'); hold on;
+figure(TestFig); scatter3(g_s_link_as_anat(1,1,3), g_s_link_as_anat(2,1,3), g_s_link_as_anat(3,1,3),500,'p','filled'); hold on;
+figure(TestFig); xi_a2_graph_anat = drawtwist(xi_ai_anat(:,2)); hold on; xi_a3_graph_anat = drawtwist(xi_ai_anat(:,3)); hold on;
 % 3.Check mass balancing function
-[MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,g_pj_ref,gst0,M_s_link_as,qp,TestFig);
+% [MBS] = calculateMBS(structure,xi_ai_ref,xi_pj_ref,g_s_link_as,g_ai_ref,g_pj_ref,gst0,M_s_link_as,qp,TestFig);
 
 % 4.Now that metalinks COM were found the Metalink Inertia Matrix|Body frame
 % is found
-[M_b_link_as] = calculateMetalinkInertiaMatrixBody(g_s_link_as,M_s_link_as);
+[M_b_link_as1] = calculateMetalinkInertiaMatrixBody(g_s_link_as,M_s_link_as);
+[M_b_link_as2] = calculateMetalinkInertiaMatrixBody(g_s_link_as_anat,M_s_link_as_anat);
 % 5.CONSTRUCT LINK BODY JACOBIANS ANG GENERALIZED INERTIA MATRIX
-[J_b_sli,g_s_link_as] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
-[M_b] = calculateGIM(J_b_sli,M_b_link_as); %
+[J_b_sli1] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
+[J_b_sli2] = calculateCoM_BodyJacobians_for_anat(xi_ai_anat, qa, g_s_link_as_anat );
+[M_b1] = calculateGIM(J_b_sli1,M_b_link_as1); %
+[M_b2] = calculateGIM(J_b_sli2,M_b_link_as2); %
 M_b_matlab = massMatrix(RefRobot,qa);
 
