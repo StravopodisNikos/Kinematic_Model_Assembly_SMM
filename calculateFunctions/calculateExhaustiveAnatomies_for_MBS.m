@@ -5,7 +5,7 @@ function [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,assembly_pa
 % Thanks to Jos (10584) for allcomb.m code.
 % Downloaded from MAthWorks File Exchange @ : https://www.mathworks.com/matlabcentral/fileexchange/10064-allcomb-varargin
 
-pseudo_step_angle = deg2rad(15);
+pseudo_step_angle = deg2rad(45);
 pseudo_limit_angle = pi/2;
 nPseudo = size(xi_pj_ref,2);
 

@@ -27,8 +27,8 @@ clear;
 close all;
 
 %% Here call ga's
-generations = 500;
-population = 150;
+generations = 300;
+population = 125;
 tolerance = 1e-12;
 stall_limit = 35;
 %% 1.Metric with min DCI
