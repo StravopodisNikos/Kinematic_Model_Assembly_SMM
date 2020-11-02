@@ -33,7 +33,7 @@ close all;
 
 %% Only visualization for code evaluation
 % Ref structure robot - All data must be calculated for reference structure
-robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/checkMBSgraph.urdf';
+robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/test_3dof.urdf';
 
 [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
 
@@ -50,9 +50,9 @@ passive_back_string_notation = '31';  % -> in ga Int Value:3
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = passive_back_string_notation;
+structure(3,:) = no_passive_string_notation;
 structure(4,:) = fixed_active_string_notation;
-structure(5,:) = passive_back_string_notation;
+structure(5,:) = passive_under_string_notation;
 structure(6,:) = passive_under_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
@@ -62,268 +62,283 @@ structure(7,:) = fixed_active_string_notation;
 % i=1:i_bodies. The i_bodies is specified inside the switch statement of
 % each metalink!
 
-%% Active-Passive joints counters, number of bodies inside each link
-i_cnt = 0;
-j_cnt = 0;
-i_bodies = 0;
-%% Build structure using the rules specified
-wrong_string_structure = false;                     % assumes initial string is correct
-if ~(strcmp(structure(1,:),fixed_active_string_notation)) % if 1st string element is NOT active
-    wrong_string_structure = true;
-    warning('[SMM STRUCTURE ASSEMBLY]: 1st string element is not declared ACTIVE')
-else
-    %% Structure after 1st active joint is correct
-    i_cnt = i_cnt+1;
-    i_bodies = i_bodies +1;
-    %% START - BUILD base_link
-    [xi_a1_0,g_s_m_i1_new] = build_base_link();
-    figure(RefFig); xi_graph = drawtwist(xi_a1_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-    [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a1_0, g_s_m_i1_new);
-    
-    [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_baselink(eye(4));
-    figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-    %% END - BUILD base_link 
-    
-    %% START - Switch statement for 1st meta link follows-Always 2 sring elements are checked!
-    % For 1st meta link, 2 conditions exist:
-    switch structure(2,:) % first switch for 1st element
-        case no_passive_string_notation % 1st case is that no pseudo exists in 2nd string element
-            % nested switch for 2nd element
-             switch structure(3,:)
-                 case passive_under_string_notation % case 2.1.1 ->  since 1st element is empty then MUST exist pseudo connected with under base         
-                     j_cnt = j_cnt+1;   
-                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
-                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                     
-                     i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                     [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                 otherwise
-                    warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
-             end
-             
-        case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface             
-             j_cnt = j_cnt+1;
-             [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
-             figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-             [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-             figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-             [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-             
-             i_bodies = i_bodies +1; % increased counter for body count inside metalink
-             [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-             figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-             
-            % nested switch for 2nd element
-            switch structure(3,:)
-                 case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
-                     % nothing to add!
-                        
-                 case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static with syntetic 4   
-                     j_cnt = j_cnt+1;
-                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
-                     figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
-                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                     
-                     i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                     [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                 case passive_back_string_notation % case 2.2.3 ->  pseudo_moving->pseudo_static with syntetic 2            
-                     j_cnt = j_cnt+1;
-                     [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
-                     figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                     figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                     [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                     
-                     i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                     [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);                     
-                     figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                otherwise
-                    warning('[SMM STRUCTURE ASSEMBLY]: 3rd string element is not valid')                     
-             end
-        otherwise
-            warning('[SMM STRUCTURE ASSEMBLY]: 2nd string element is not valid')
-    end
-    %% END - Switch statement for 1st meta link
-
-    %% START - Rules check for 2nd meta link
-    if ~(strcmp(structure(4,:),fixed_active_string_notation)) % if 1st string element is NOT active
-        wrong_string_structure = true;
-        warning('[SMM STRUCTURE ASSEMBLY]: 4st string element is not declared ACTIVE')
-    else
-        
-         %% START - Add active DXL
-         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
-         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
-         
-         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
-         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-         
-         i_cnt = i_cnt+1;
-         figure(RefFig); xi_graph = drawtwist(xi_a2_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, g_s_m_i1_new);
-         %% END - Add active DXL
-        i_bodies = 0;   % the static part of Dynamixel is the last body of each metalink
-         
-        %% START - Switch statement for 2nd meta link follows-Always 2 sring elements are checked!
-        i_bodies = i_bodies +1; % increased counter for body count inside metalink
-        [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_moving(g_s_m_i1_new);         
-        figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-        
-        % For 2nd meta link, 3 conditions exist:
-        switch structure(5,:) % first switch for 1st element
-            case no_passive_string_notation % case 3.1           
-                % nothing to add!
-                switch structure(6,:)
-                    case passive_under_string_notation  % case 3.1.1
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                    case passive_back_string_notation   % case 3.1.2                                
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0,  g_s_m_i1_new);
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                    otherwise
-                         warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid') 
-                end
-                
-            case passive_under_string_notation      
-                j_cnt = j_cnt+1;
-                [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
-                [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                
-                i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                
-                switch structure(6,:) % case 3.2
-                    case no_passive_string_notation     % case 3.2.1
-                         % nothing to add  -> this case leads to 3.1.1
-                    case passive_under_string_notation  % case 3.2.2 
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
-                         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                         
-                    case passive_back_string_notation   % case 3.2.3 
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
-                         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on; 
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                         
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                    otherwise
-                         warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid')
-                end 
-                
-            case passive_back_string_notation                 
-                 j_cnt = j_cnt+1;
-                 [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
-                 [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                 figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;                  
-                 [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                 
-                 i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                 [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-                 figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                switch structure(6,:)
-                    case no_passive_string_notation     % case 3.3.1
-                        % nothing to add  -> this case leads to 3.1.2
-                    case passive_under_string_notation  % case 3.3.2
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
-                         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new); 
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                    case passive_back_string_notation   % case 3.3.3
-                         j_cnt = j_cnt+1;
-                         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
-                         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
-                         figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-                         [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
-                         
-                         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-                         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new); 
-                         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-                    otherwise
-                         warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid')    
-                end   
-            otherwise
-                warning('[SMM STRUCTURE ASSEMBLY]: 5th string element is not valid')
-        end %% END - Switch statement for 2nd meta link    
-    end  %% END - Rules check for 2nd meta link
-    
-    if ~(strcmp(structure(7,:),fixed_active_string_notation)) % if 7th string element is NOT active
-        wrong_string_structure = true;
-        warning('[SMM STRUCTURE ASSEMBLY]: 7th string element is not declared ACTIVE')
-    else
-         
-         %% START - Add active DXL
-         [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
-         figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
-         
-         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
-         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
-         
-         i_cnt = i_cnt+1;
-         figure(RefFig); xi_graph = drawtwist(xi_a3_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
-         [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a3_0, g_s_m_i1_new);
-         
-         % Since this is last active twist, TOOL frame is added
-         [gst0] = build_tool_frame(g_s_m_i1_new);
-         
-         %% END - Add active DXL
-         i_bodies = 0;
-         
-         % Last link has only one body, the moving Dxl frame
-         i_bodies = i_bodies +1; % increased counter for body count inside metalink
-         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_moving(g_s_m_i1_new);   
-        
-    end
-end
+% % %% Active-Passive joints counters, number of bodies inside each link
+% % i_cnt = 0;
+% % j_cnt = 0;
+% % i_bodies = 0;
+% % %% Build structure using the rules specified
+% % wrong_string_structure = false;                     % assumes initial string is correct
+% % if ~(strcmp(structure(1,:),fixed_active_string_notation)) % if 1st string element is NOT active
+% %     wrong_string_structure = true;
+% %     warning('[SMM STRUCTURE ASSEMBLY]: 1st string element is not declared ACTIVE')
+% % else
+% %     %% Structure after 1st active joint is correct
+% %     i_cnt = i_cnt+1;
+% %     i_bodies = i_bodies +1;
+% %     %% START - BUILD base_link
+% %     [xi_a1_0,g_s_m_i1_new] = build_base_link();
+% %     figure(RefFig); xi_graph = drawtwist(xi_a1_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %     [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a1_0, g_s_m_i1_new);
+% %     
+% %     [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_baselink(eye(4));
+% %     figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %     %% END - BUILD base_link 
+% %     
+% %     %% START - Switch statement for 1st meta link follows-Always 2 sring elements are checked!
+% %     % For 1st meta link, 2 conditions exist:
+% %     switch structure(2,:) % first switch for 1st element
+% %         case no_passive_string_notation % 1st case is that no pseudo exists in 2nd string element
+% %             % nested switch for 2nd element
+% %              switch structure(3,:)
+% %                  case passive_under_string_notation % case 2.1.1 ->  since 1st element is empty then MUST exist pseudo connected with under base         
+% %                      j_cnt = j_cnt+1;   
+% %                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
+% %                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                      [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                      
+% %                      i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                      [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                      figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                  otherwise
+% %                     warning('[SMM STRUCTURE ASSEMBLY]: 3nd string element is not valid')                     
+% %              end
+% %              
+% %         case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface             
+% %              j_cnt = j_cnt+1;
+% %              [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic1',g_s_m_i1_new);
+% %              figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %              [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %              figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %              [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %              
+% %              i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %              [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %              figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %              
+% %             % nested switch for 2nd element
+% %             switch structure(3,:)
+% %                  case  no_passive_string_notation % case 2.2.1 -> this case leads to 2.1.1
+% %                      % nothing to add!
+% %                         
+% %                  case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static with syntetic 4   
+% %                      j_cnt = j_cnt+1;
+% %                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
+% %                      figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
+% %                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                      [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                      
+% %                      i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                      [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                      figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                  case passive_back_string_notation % case 2.2.3 ->  pseudo_moving->pseudo_static with syntetic 2            
+% %                      j_cnt = j_cnt+1;
+% %                      [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
+% %                      figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %                      [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                      figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                      [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                      
+% %                      i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                      [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);                     
+% %                      figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                 otherwise
+% %                     warning('[SMM STRUCTURE ASSEMBLY]: 3rd string element is not valid')                     
+% %              end
+% %         otherwise
+% %             warning('[SMM STRUCTURE ASSEMBLY]: 2nd string element is not valid')
+% %     end
+% %     %% END - Switch statement for 1st meta link
+% % 
+% %     %% START - Rules check for 2nd meta link
+% %     if ~(strcmp(structure(4,:),fixed_active_string_notation)) % if 1st string element is NOT active
+% %         wrong_string_structure = true;
+% %         warning('[SMM STRUCTURE ASSEMBLY]: 4st string element is not declared ACTIVE')
+% %     else
+% %         
+% %          %% START - Add active DXL
+% %          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
+% %          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %          [xi_a2_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
+% %          
+% %          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
+% %          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %          
+% %          i_cnt = i_cnt+1;
+% %          figure(RefFig); xi_graph = drawtwist(xi_a2_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a2_0, g_s_m_i1_new);
+% %          %% END - Add active DXL
+% %         i_bodies = 0;   % the static part of Dynamixel is the last body of each metalink
+% %          
+% %         %% START - Switch statement for 2nd meta link follows-Always 2 sring elements are checked!
+% %         i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %         [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_moving(g_s_m_i1_new);         
+% %         figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %         
+% %         % For 2nd meta link, 3 conditions exist:
+% %         switch structure(5,:) % first switch for 1st element
+% %             case no_passive_string_notation % case 3.1           
+% %                 % nothing to add!
+% %                 switch structure(6,:)
+% %                     case passive_under_string_notation  % case 3.1.1
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                     case passive_back_string_notation   % case 3.1.2                                
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;  
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0,  g_s_m_i1_new);
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                     otherwise
+% %                          warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid') 
+% %                 end
+% %                 
+% %             case passive_under_string_notation      
+% %                 j_cnt = j_cnt+1;
+% %                 [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic5',g_s_m_i1_new);
+% %                 [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                 figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                 [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                 
+% %                 i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                 [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                 figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                 
+% %                 switch structure(6,:) % case 3.2
+% %                     case no_passive_string_notation     % case 3.2.1
+% %                          % nothing to add  -> this case leads to 3.1.1
+% %                     case passive_under_string_notation  % case 3.2.2 
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
+% %                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                          
+% %                     case passive_back_string_notation   % case 3.2.3 
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
+% %                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on; 
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                          
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                     otherwise
+% %                          warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid')
+% %                 end 
+% %                 
+% %             case passive_back_string_notation                 
+% %                  j_cnt = j_cnt+1;
+% %                  [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic3',g_s_m_i1_new);
+% %                  [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                  figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;                  
+% %                  [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                  
+% %                  i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                  [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
+% %                  figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                 switch structure(6,:)
+% %                     case no_passive_string_notation     % case 3.3.1
+% %                         % nothing to add  -> this case leads to 3.1.2
+% %                     case passive_under_string_notation  % case 3.3.2
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic4',g_s_m_i1_new);
+% %                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;                     
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new); 
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                     case passive_back_string_notation   % case 3.3.3
+% %                          j_cnt = j_cnt+1;
+% %                          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('synthetic2',g_s_m_i1_new);
+% %                          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %                          [xi_pj_0,g_s_m_i1_new] = build_pseudomodule(g_s_m_i1_new);
+% %                          figure(RefFig); xi_graph = drawtwist(xi_pj_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %                          [xi_pj_ref(:,j_cnt),g_pj_ref(:,:,j_cnt)] = extract_ref_structure_anatomy_info('passive', xi_pj_0, g_s_m_i1_new);
+% %                          
+% %                          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %                          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new); 
+% %                          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %                     otherwise
+% %                          warning('[SMM STRUCTURE ASSEMBLY]: 6th string element is not valid')    
+% %                 end   
+% %             otherwise
+% %                 warning('[SMM STRUCTURE ASSEMBLY]: 5th string element is not valid')
+% %         end %% END - Switch statement for 2nd meta link    
+% %     end  %% END - Rules check for 2nd meta link
+% %     
+% %     if ~(strcmp(structure(7,:),fixed_active_string_notation)) % if 7th string element is NOT active
+% %         wrong_string_structure = true;
+% %         warning('[SMM STRUCTURE ASSEMBLY]: 7th string element is not declared ACTIVE')
+% %     else
+% %          
+% %          %% START - Add active DXL
+% %          [synthetic_tform,g_s_m_i1_new] = add_synthetic_joint_tf('active_assembly',g_s_m_i1_new);
+% %          figure(RefFig); drawframe(g_s_m_i1_new,0.15); hold on;
+% %          [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_ref(:,j_cnt));
+% %          
+% %          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
+% %          figure(RefFig); drawframe( g_s_com_k_i(:,:,i_cnt,i_bodies),0.15,'alternate_color'); hold on;
+% %          
+% %          i_cnt = i_cnt+1;
+% %          figure(RefFig); xi_graph = drawtwist(xi_a3_0); hold on; drawframe(g_s_m_i1_new,0.15); hold on;
+% %          [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a3_0, g_s_m_i1_new);
+% %          
+% %          % Since this is last active twist, TOOL frame is added
+% %          [gst0] = build_tool_frame(g_s_m_i1_new);
+% %          
+% %          %% END - Add active DXL
+% %          i_bodies = 0;
+% %          
+% %          % Last link has only one body, the moving Dxl frame
+% %          i_bodies = i_bodies +1; % increased counter for body count inside metalink
+% %          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_moving(g_s_m_i1_new);   
+% %         
+% %     end
+% % end
 
 % NEXT ARE ONLY FOR CODE VERIFICATION: WILL BE IMPLEMENTED IN SEPARATE
 % FUNCTIONS!
+% ================= GA PARAMETERS =================
+%  I.1 Assembly sequence definition -> given in l.49-55
+%  I.2 Assembly parameters ONLY FOR THE STRUCTURE TESTED, must manually
+%  give the same values given the asembly sequence and the values @
+%  assembly_parameters_for_ovidius_robot.yaml
+assembly_parameters(1,:) = [0,-0.03,1.5708]';                  % syn2 bcause 31
+assembly_parameters(2,:) = [-0.035,0,1.5708]';                  % syn3 because 31
+assembly_parameters(3,:) = [0,0,-1.5708]';                % syn4 because 21
+assembly_parameters(4,1) = 0;                       % dummy zero since 1st active joint is fixed
+assembly_parameters(4,2) = 1.5708;                   % 1st dxl assembly pitch parameter
+assembly_parameters(4,3) = 0;                   % 2nd dxl assembly pitch parameter
+% ================= GA PARAMETERS =================
+[xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_3dof(structure,assembly_parameters);
+figure(RefFig); xi1_graph = drawtwist(xi_ai_ref(:,1)); hold on; xi2_graph = drawtwist(xi_ai_ref(:,2)); hold on; xi3_graph = drawtwist(xi_ai_ref(:,3)); hold on; 
+figure(RefFig); xip1_graph = drawtwist(xi_pj_ref(:,1)); hold on; xip2_graph = drawtwist(xi_pj_ref(:,2)); hold on; xip3_graph = drawtwist(xi_pj_ref(:,3)); hold on; 
 
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
@@ -344,18 +359,7 @@ figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1
 figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),500,'p','filled'); hold on;
 
 % 2.1 EXTRACT INERTIAS FOR GIVEN STRUCTURE & ANATOMY(Here the ga fn are checked-parameters must agree!)
-% ================= GA PARAMETERS =================
-%  I.1 Assembly sequence definition -> given in l.49-55
-%  I.2 Assembly parameters ONLY FOR THE STRUCTURE TESTED, must manually
-%  give the same values given the asembly sequence and the values @
-%  assembly_parameters_for_ovidius_robot.yaml
-assembly_parameters(1,:) = [0,-0.03,1.5708]';                  % syn2 bcause 31
-assembly_parameters(2,:) = [-0.035,0,1.5708]';                  % syn3 because 31
-assembly_parameters(3,:) = [0,0,-1.5708]';                % syn4 because 21
-assembly_parameters(4,1) = 0;                       % dummy zero since 1st active joint is fixed
-assembly_parameters(4,2) = 0;                   % 1st dxl assembly pitch parameter
-assembly_parameters(4,3) = 0;                   % 2nd dxl assembly pitch parameter
-% ================= GA PARAMETERS =================
+
 [gst_anat,xi_ai_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy(structure,assembly_parameters,qp,xi_pj_ref,TestFig);
 [g_s_link_as_anat,M_s_link_as_anat] = calculateCoMmetalinks(M_s_com_k_i_anat,g_s_com_k_i_anat);
 figure(TestFig); scatter3(g_s_link_as_anat(1,1,1), g_s_link_as_anat(2,1,1), g_s_link_as_anat(3,1,1),500,'p','filled'); hold on;
