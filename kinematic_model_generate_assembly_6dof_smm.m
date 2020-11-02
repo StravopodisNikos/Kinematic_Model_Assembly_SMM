@@ -62,11 +62,11 @@ assembly_parameters(7,:) = [0,0,-1.5708]';
 assembly_parameters(8,:) = [0.05,0,-1.5708]';                
 assembly_parameters(9,:) = [0,0.005,-0.7854]';                
 assembly_parameters(10,1) = 0;                   % dummy zero since 1st active joint is fixed
-assembly_parameters(10,2) = 0;                   % 1st dxl assembly pitch parameter
+assembly_parameters(10,2) = 1.5708;                   % 1st dxl assembly pitch parameter
 assembly_parameters(10,3) = 0;                   % 2nd dxl assembly pitch parameter
-assembly_parameters(11,1) = 0;                   % 3rd dxl assembly pitch parameter
+assembly_parameters(11,1) = 1.5708;                   % 3rd dxl assembly pitch parameter
 assembly_parameters(11,2) = 0;                   % 4th dxl assembly pitch parameter
-assembly_parameters(11,3) = 0;                   % 5th dxl assembly pitch parameter
+assembly_parameters(11,3) = 1.5708;                   % 5th dxl assembly pitch parameter
 % 6dof structure assembly
 [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_6dof(structure,assembly_parameters,RefFig);
 

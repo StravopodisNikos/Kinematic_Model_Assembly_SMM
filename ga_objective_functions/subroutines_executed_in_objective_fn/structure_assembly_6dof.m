@@ -276,7 +276,7 @@ else
             i_bodies = i_bodies +1; % increased counter for body count inside metalink
             [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
 
-            switch structure(6,:) % case 3.2
+            switch structure(9,:) % case 3.2
                 case no_passive_string_notation     % case 3.2.1
                      % nothing to add  -> this case leads to 3.1.1
                 case passive_under_string_notation  % case 3.2.2 
@@ -312,7 +312,7 @@ else
 
              i_bodies = i_bodies +1; % increased counter for body count inside metalink
              [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_pseudomodule(g_s_m_i1_new);
-            switch structure(6,:)
+            switch structure(9,:)
                 case no_passive_string_notation     % case 3.3.1
                     % nothing to add  -> this case leads to 3.1.2
                 case passive_under_string_notation  % case 3.3.2
