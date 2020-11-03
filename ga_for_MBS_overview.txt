@@ -1,0 +1,14 @@
+obj_fn_mass_balancing_structure_optimization_minDCIoffdiag_SMM
+
+structure assembly : structure_assembly_3dof ->returns everything for ref anatomy
+
+calculateExhaustiveAnatomies_for_MBS -> calculateMBS_no_graph -> calculateCoM_ki_s_structure_anatomy_no_graph : return anatomy elemetns
+																				||
+																				||
+																				\/
+																		calculateCoMmetalinks : returns CoM of links for evaluated anatomy
+
+test chromosomes: - > MB*new=MBSref/Fi_rich
+1. x_nikos  =  [2 3 3 0 0.001 0 -0.1 0 1.5708 0.001 0.001 0  0 0] 							-> 9.2321
+2. x_random =  [3 2 3 -0.005 0.005 0.78 0.001 -0.055 -1.5708 0.003 -0.001 1.5708  1 0]		-> 5.8188
+3. x_random2 = [1 2 1 -0.005 0.005 0.78 0.003 -0.055 -0.7854 0.003 -0.001 1.5708  1 1]      -> 10.2576

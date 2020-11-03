@@ -602,7 +602,7 @@ end
  %% END - Rules check for 5th meta link
 
  %% ADD final link - START
-if ~(strcmp(structure(7,:),fixed_active_string_notation)) % if 7th string element is NOT active
+if ~(strcmp(structure(16,:),fixed_active_string_notation)) % if 7th string element is NOT active
     wrong_string_structure = true;
     warning('[SMM STRUCTURE ASSEMBLY]: 7th string element is not declared ACTIVE')
 else

@@ -90,7 +90,7 @@ MBS_ref = calculateMBS_no_graph(structure,assembly_parameters,xi_ai_ref,xi_pj_re
 
 %% V. Final structure score
 % MB_star = DCI_star_ref/F_i_rich;
-MB_star = MBS_ref/F_i_rich;
+MB_star = MBS_ref*F_i_rich;
 end
 
 end

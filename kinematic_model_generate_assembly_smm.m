@@ -37,9 +37,9 @@ robotURDFfile = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros
 
 [RefRobot,RefFig,RefConfig,NumDoF] = ImportRobotRefAnatomyModel(robotURDFfile);
 
-% LAST_ACTIVE = char(RefRobot.BodyNames(11));
-% TOOL =  char(RefRobot.BodyNames(12));
-% g_last_active_TOOL = getTransform(RefRobot, RefConfig,TOOL, LAST_ACTIVE);  % pseudo moving tf with respect to pseudo static frame {ki} (from)ja->(into)jb
+robotURDFfile_test_anat = '/home/nikos/PhD/projects/Parametric_Simulation_Model_SMM/xacros/generated_urdf_from_xacros_here/test_3dof_test_anat.urdf';
+
+[TestRobot,TestFig,TestConfig,~] = ImportRobotRefAnatomyModel(robotURDFfile_test_anat);
 
 %% Define smm structure string (in optimization it is ga generated!)
 logical wrong_string_structure;
@@ -50,10 +50,10 @@ passive_back_string_notation = '31';  % -> in ga Int Value:3
 
 structure(1,:) = fixed_active_string_notation;
 structure(2,:) = passive_under_string_notation;
-structure(3,:) = no_passive_string_notation;
+structure(3,:) = passive_back_string_notation;
 structure(4,:) = fixed_active_string_notation;
 structure(5,:) = passive_under_string_notation;
-structure(6,:) = passive_under_string_notation;
+structure(6,:) = passive_back_string_notation;
 structure(7,:) = fixed_active_string_notation;
 
 % Each link Inertia Matrix is constructed as the Sum of the Links Bodies
@@ -329,9 +329,9 @@ structure(7,:) = fixed_active_string_notation;
 %  I.2 Assembly parameters ONLY FOR THE STRUCTURE TESTED, must manually
 %  give the same values given the asembly sequence and the values @
 %  assembly_parameters_for_ovidius_robot.yaml
-assembly_parameters(1,:) = [0,-0.03,1.5708]';                  % syn2 bcause 31
-assembly_parameters(2,:) = [-0.035,0,1.5708]';                  % syn3 because 31
-assembly_parameters(3,:) = [0,0,-1.5708]';                % syn4 because 21
+assembly_parameters(1,:) = [-0.005,0.005,0.78]';                  % syn2 bcause 31
+assembly_parameters(2,:) = [0.001,-0.055,-1.5708]';                  % syn3 because 31
+assembly_parameters(3,:) = [0.003,-0.001,1.5708]';                % syn4 because 21
 assembly_parameters(4,1) = 0;                       % dummy zero since 1st active joint is fixed
 assembly_parameters(4,2) = 1.5708;                   % 1st dxl assembly pitch parameter
 assembly_parameters(4,3) = 0;                   % 2nd dxl assembly pitch parameter
@@ -343,23 +343,22 @@ figure(RefFig); xip1_graph = drawtwist(xi_pj_ref(:,1)); hold on; xip2_graph = dr
 % 1.POE FORWARD KINEMATICS(works fine)
 % SET configuration and anatomy of assembled structure => must agree with
 % xacro file that built urdf
-qa = [0 0 0]'; qp = [1.5708 1 -1 1.5708]';
-TestFig = figure; show(RefRobot,qa); hold on;
+qa = [0 0 0]'; qp = [0 0 0 0]';
+figure(TestFig); show(TestRobot,qa); hold on;
 %[TestFig] = visualize_robot_urdf(robotURDFfile,qa);
-[g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
+[g_ai,g_pj,Jsp,Pi,gst] = calculateForwardKinematicsPOE(structure,'3dof',xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
 figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15); drawframe(gst,0.15); hold on; hold on; %xi_a2_graph = drawtwist(Jsp(:,2)); hold on; xi_a3_graph = drawtwist(Jsp(:,3)); hold on;
-figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
+figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; %drawframe(g_pj(:,:,4),0.15); hold on;
 % save('ikp_test_for_babis.mat','structure','qp','xi_ai_ref','xi_pj_ref','g_ai_ref','g_pj_ref','gst0')
 
 % 2.EXTRACT INERTIAS FOR GIVEN STRUCTURE @ REFERENCE ANATOMY
 % Evaluate calculated Link Inertias(works fine)
 [g_s_link_as,M_s_link_as] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
-figure(RefFig); scatter3(g_s_link_as(1,1,1), g_s_link_as(2,1,1), g_s_link_as(3,1,1),500,'p','filled'); hold on;
-figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1,2),500,'p','filled'); hold on;
-figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),500,'p','filled'); hold on;
+% figure(RefFig); scatter3(g_s_link_as(1,1,1), g_s_link_as(2,1,1), g_s_link_as(3,1,1),500,'p','filled'); hold on;
+% figure(RefFig); scatter3(g_s_link_as(1,1,2), g_s_link_as(2,1,2), g_s_link_as(3,1,2),500,'p','filled'); hold on;
+% figure(RefFig); scatter3(g_s_link_as(1,1,3), g_s_link_as(2,1,3), g_s_link_as(3,1,3),500,'p','filled'); hold on;
 
 % 2.1 EXTRACT INERTIAS FOR GIVEN STRUCTURE & ANATOMY(Here the ga fn are checked-parameters must agree!)
-
 [gst_anat,xi_ai_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy(structure,assembly_parameters,qp,xi_pj_ref,TestFig);
 [g_s_link_as_anat,M_s_link_as_anat] = calculateCoMmetalinks(M_s_com_k_i_anat,g_s_com_k_i_anat);
 figure(TestFig); scatter3(g_s_link_as_anat(1,1,1), g_s_link_as_anat(2,1,1), g_s_link_as_anat(3,1,1),500,'p','filled'); hold on;
