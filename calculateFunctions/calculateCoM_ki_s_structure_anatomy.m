@@ -35,6 +35,7 @@ fixed_active_string_notation = 'x0';
 no_passive_string_notation = 'x9';    % -> in ga Int Value:1
 passive_under_string_notation = '21'; % -> in ga Int Value:2
 passive_back_string_notation = '31';  % -> in ga Int Value:3
+nDoF_string = '3dof';
 
 wrong_string_structure = false;                     % assumes initial string is correct
 if ~(strcmp(structure(1,:),fixed_active_string_notation)) % if 1st string element is NOT active
@@ -56,7 +57,7 @@ else
         case passive_under_string_notation % 2nd case is that pseudo exists but only bolted in under base connectivity surface             
              j_cnt = j_cnt+1;
              pseudo_assembly_index = 0;
-             [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic1',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+             [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic1',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
              [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
              figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
              
@@ -71,7 +72,7 @@ else
                  case passive_under_string_notation % case 2.2.2 -> pseudo_moving->pseudo_static with syntetic 4   
                      j_cnt = j_cnt+1;
                      pseudo_assembly_index = 1;
-                     [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                     [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                      [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                      figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                      
@@ -80,7 +81,7 @@ else
                  case passive_back_string_notation % case 2.2.3 ->  pseudo_moving->pseudo_static with syntetic 2            
                      j_cnt = j_cnt+1;
                      pseudo_assembly_index = 1;
-                     [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                     [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                      figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                      [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                      figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
@@ -104,8 +105,8 @@ else
         
          %% START - Add active DXL
          active_assembly_index = 2;
-         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
-         [xi_a2_anat,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_anat(:,j_cnt));
+         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
+         [xi_a2_anat,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
          figure(point2figure); drawframe(g_s_m_i1_new,0.15); hold on;
          i_bodies = i_bodies +1; % increased counter for body count inside metalink
          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
@@ -127,7 +128,7 @@ else
                     case passive_under_string_notation  % case 3.1.1
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3; % was 2 for 26_10 tests
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic5',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic5',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -136,7 +137,7 @@ else
                     case passive_back_string_notation   % case 3.1.2                                
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3; % was 2 for 26_10 tests
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic3',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic3',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -149,7 +150,7 @@ else
             case passive_under_string_notation      
                 j_cnt = j_cnt+1;
                 pseudo_assembly_index = 2;
-                [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic5',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic5',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                 [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                 figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                 
@@ -162,7 +163,7 @@ else
                     case passive_under_string_notation  % case 3.2.2 
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3;
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -172,7 +173,7 @@ else
                     case passive_back_string_notation   % case 3.2.3 
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3;
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);                         
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -185,7 +186,7 @@ else
             case passive_back_string_notation                 
                  j_cnt = j_cnt+1;
                  pseudo_assembly_index = 2;
-                 [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic3',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                 [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic3',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                  [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                  figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                  
@@ -197,7 +198,7 @@ else
                     case passive_under_string_notation  % case 3.3.2
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3;
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic4',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -206,7 +207,7 @@ else
                     case passive_back_string_notation   % case 3.3.3
                          j_cnt = j_cnt+1;
                          pseudo_assembly_index = 3;
-                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
+                         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'synthetic2',g_s_m_i1_new,assembly_parameters,pseudo_assembly_index);
                          [last_expo,xi_pj_anat(:,j_cnt),g_s_m_i1_new] = build_pseudomodule_with_anat(g_s_m_i1_new,xi_pj_ref(:,j_cnt),anatomy(j_cnt),last_expo);
                          figure(point2figure); drawframe(g_s_m_i1_new,0.15,'alternate_color'); hold on;
                          
@@ -227,8 +228,8 @@ else
          
          %% START - Add active DXL
          active_assembly_index = 3;
-         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga('active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
-         [xi_a3_anat,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new,xi_pj_anat(:,j_cnt));
+         [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
+         [xi_a3_anat,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
          
          i_bodies = i_bodies +1; % increased counter for body count inside metalink
          [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
