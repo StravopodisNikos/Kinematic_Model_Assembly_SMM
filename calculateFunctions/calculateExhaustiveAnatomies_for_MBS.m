@@ -1,6 +1,6 @@
-function [F_i_rich] = calculateExhaustiveAnatomies_for_MBS(structure,assembly_parameters,MBS_ref,xi_ai_ref,xi_pj_ref)
+function [returned_MBS_anat] = calculateExhaustiveAnatomies_for_MBS(structure,assembly_parameters,direction_string,xi_ai_ref,xi_pj_ref)
 % Calculates all possible anatomies given the total number of pseudos and
-% the known pseudo step angle. Evaluates the richness of a structure, w.r.t the Mass Balancing Score
+% the known pseudo step angle. returns min/max Mass Balancing Score
 
 % Thanks to Jos (10584) for allcomb.m code.
 % Downloaded from MAthWorks File Exchange @ : https://www.mathworks.com/matlabcentral/fileexchange/10064-allcomb-varargin
@@ -30,21 +30,26 @@ end
 total_possible_anatomies = size(all_possible_anatomies,1);  
 
 %% Evaluate each anatomy
-RELATIVE_RICHNESS = 0;      % This is measure for the structure evaluated, so must be initialized before exhaustive evaluation
-
 for anatomy_cnt=1:total_possible_anatomies
     
         evaluated_anatomy = all_possible_anatomies(anatomy_cnt,:); % pick the row of array
         
         MBS_i(anatomy_cnt) = calculateMBS_no_graph(structure,assembly_parameters,xi_ai_ref,xi_pj_ref,evaluated_anatomy);
         
-        if MBS_i(anatomy_cnt) < MBS_ref
-            RELATIVE_RICHNESS = RELATIVE_RICHNESS + 1;
-        end
+%         if MBS_i(anatomy_cnt) < MBS_ref
+%             RELATIVE_RICHNESS = RELATIVE_RICHNESS + 1;
+%         end
 
 end
 
 %% Compute metric
-F_i_rich = RELATIVE_RICHNESS / total_possible_anatomies;
+switch direction_string
+    case 'min'
+        returned_MBS_anat = min(MBS_i);
+    case 'max'
+        returned_MBS_anat = max(MBS_i);
+    otherwise
+        returned_MBS_anat = 0;
+end
 
 end
