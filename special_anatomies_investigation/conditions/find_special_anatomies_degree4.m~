@@ -4,13 +4,13 @@ function [criterion_satisfied] = find_special_anatomies_degree4(xi_ai_anat,crite
 %
 % The characteristic polynomial is reduced to degree 4 when:
 % 1.a the manipulator has three parallel revolute axes
-% 1.b the manipulator has three intersecting revolute axes
+% 1.b the manipulator has three parallel revolute axes
 % 2.  the manipulator has three intersecting perpendicular pairs
 
 % Here each criterion is investigated for a 6 DoF SMM structure
 
 % Input : 1. the active twists @ reference configuration for the desired
-% structure/anatomy 2. desired criterion 3. tolerance
+% structure/anatomy 
 
 % Obtain matlab_ws folder path on the pc
 current_path = cd; % pc-grafeio
@@ -92,7 +92,7 @@ switch criterion
         end
         
     otherwise
-        warning('[find_special_anatomies_degree4_conditions]: Criterion specified NOT valid')
+        warning('[find_special_anatomies_degree4_conditions]: Condition specified NOT valid')
 end
 
 if cond_1_satisfied || cond_2_satisfied

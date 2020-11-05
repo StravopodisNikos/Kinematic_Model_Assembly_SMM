@@ -1,4 +1,4 @@
-function [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_6dof(structure,assembly_parameters,p2f)
+function [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wrong_string_structure] = structure_assembly_6dof(structure,assembly_parameters)
 % Assembles smm structure for ovidius robot. Based on file:
 % structure_assembly_6dof.m
 % Generates active-passive twists and joints-tcp frame tfs of assembled
@@ -221,16 +221,16 @@ else
      %% START - Add active DXL
      active_assembly_index = 3;
      [~,g_s_m_i1_new] = add_synthetic_joint_tf_for_ga(nDoF_string,'active_assembly',g_s_m_i1_new,assembly_parameters,active_assembly_index);
-     figure(p2f); drawframe(g_s_m_i1_new,0.15); hold on;
+%      figure(p2f); drawframe(g_s_m_i1_new,0.15); hold on;
      [xi_a3_0,g_s_m_i1_new] = build_activemodule(g_s_m_i1_new);
-     figure(p2f); drawframe(g_s_m_i1_new,0.15); hold on;
+%      figure(p2f); drawframe(g_s_m_i1_new,0.15); hold on;
      
      i_bodies = i_bodies +1; % increased counter for body count inside metalink
      [g_s_com_k_i(:,:,i_cnt,i_bodies), M_s_com_k_i(:,:,i_cnt,i_bodies)] = build_inertia_active_static(g_s_m_i1_new);          
 
      i_cnt = i_cnt+1;
      [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a3_0, g_s_m_i1_new);
-     figure(p2f); xi_a3_graph = drawtwist(xi_a3_0); hold on;
+%      figure(p2f); xi_a3_graph = drawtwist(xi_a3_0); hold on;
      %% END - Add active DXL
      i_bodies = 0;
 
@@ -359,7 +359,7 @@ else
 
      i_cnt = i_cnt+1;
      [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a4_0, g_s_m_i1_new);
-     figure(p2f); xi_a4_graph = drawtwist(xi_a4_0); hold on;
+%      figure(p2f); xi_a4_graph = drawtwist(xi_a4_0); hold on;
      %% END - Add active DXL
      i_bodies = 0;
 
@@ -488,7 +488,7 @@ else
 
      i_cnt = i_cnt+1;
      [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a5_0, g_s_m_i1_new);
-    figure(p2f); xi_a5_graph = drawtwist(xi_a5_0); hold on;
+%     figure(p2f); xi_a5_graph = drawtwist(xi_a5_0); hold on;
      %% END - Add active DXL
      i_bodies = 0;
 
@@ -617,7 +617,7 @@ else
 
      i_cnt = i_cnt+1;
      [xi_ai_ref(:,i_cnt),g_ai_ref(:,:,i_cnt)] = extract_ref_structure_anatomy_info('active', xi_a6_0, g_s_m_i1_new);
-    figure(p2f); xi_a6_graph = drawtwist(xi_a6_0); hold on;
+%     figure(p2f); xi_a6_graph = drawtwist(xi_a6_0); hold on;
      % Since this is last active twist, TOOL frame is added
      [gst0] = build_tool_frame(g_s_m_i1_new);
 

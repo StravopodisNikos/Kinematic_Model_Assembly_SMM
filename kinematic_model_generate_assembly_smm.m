@@ -371,11 +371,11 @@ figure(TestFig); xi_a2_graph_anat = drawtwist(xi_ai_anat(:,2)); hold on; xi_a3_g
 % 4.Now that metalinks COM were found the Metalink Inertia Matrix|Body frame
 % is found
 [M_b_link_as1] = calculateMetalinkInertiaMatrixBody(g_s_link_as,M_s_link_as);
-[M_b_link_as2] = calculateMetalinkInertiaMatrixBody(g_s_link_as_anat,M_s_link_as_anat);
+[M_b_link_as2] = calculateMetalinkInertiaMatrixBody(g_s_link_as_anat,M_s_link_as_anat); % this is the good one
 % 5.CONSTRUCT LINK BODY JACOBIANS ANG GENERALIZED INERTIA MATRIX
 [J_b_sli1] = calculateCoM_BodyJacobians(xi_ai_ref, qa, Pi, g_s_link_as );
-[J_b_sli2] = calculateCoM_BodyJacobians_for_anat(xi_ai_anat, qa, g_s_link_as_anat );
+[J_b_sli2] = calculateCoM_BodyJacobians_for_anat(xi_ai_anat, qa, g_s_link_as_anat );  % this is the good one
 [M_b1] = calculateGIM(J_b_sli1,M_b_link_as1); %
-[M_b2] = calculateGIM(J_b_sli2,M_b_link_as2); %
-M_b_matlab = massMatrix(RefRobot,qa);
+[M_b2] = calculateGIM(J_b_sli2,M_b_link_as2);  % this is the good one
+M_b_matlab = massMatrix(TestRobot,qa);
 
