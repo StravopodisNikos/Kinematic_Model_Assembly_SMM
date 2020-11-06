@@ -19,8 +19,13 @@ function [criterion_satisfied] = find_special_anatomies_degree2(xi_ai_anat,crite
 % Output is ONLY a 1x1 logical value! => Thisfunction can be used to
 % evaluate a specified structure+anatomy (exhaustive anatomy evaluation)
 
+% Obtain matlab_ws folder path on the pc
+current_path = cd; % pc-grafeio
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
+
 % Add libraries relative to matlab_ws folder
-geom3d_path_relative_to_matlab_ws = fullfile('geom3d_library','geom3d',filesep); geom3d_library_path = strcat(root_path,geom3d_path_relative_to_matlab_ws); addpath(geom3d_library_path);
+geom3d_path_relative_to_matlab_ws = fullfile('matlab_ws','geom3d_library','geom3d',filesep); geom3d_library_path = strcat(root_path,geom3d_path_relative_to_matlab_ws); addpath(geom3d_library_path);
 
 % calculate DoF
 nDoF = size(xi_ai_anat,2);

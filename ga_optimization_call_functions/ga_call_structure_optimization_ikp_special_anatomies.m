@@ -33,27 +33,27 @@
 %% Add paths to all functions:
 % Obtain matlab_ws folder path on the pc
 current_path = cd; % pc-grafeio
-root_path = string(split(current_path,'matlab_ws/'));
-root_path = strcat(root_path(1),'matlab_ws/');
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
 
 % Add libraries relative to matlab_ws folder
-ga_building_functions_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','building_functions',filesep);
+ga_building_functions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','building_functions',filesep);
 ga_building_functions_library_path = strcat(root_path,ga_building_functions_path_relative_to_matlab_ws); addpath(ga_building_functions_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
 
-ga_synthetic_joints_tfs_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','synthetic_joints_tfs',filesep);
+ga_synthetic_joints_tfs_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','synthetic_joints_tfs',filesep);
 ga_synthetic_joints_tfs_library_path = strcat(root_path,ga_synthetic_joints_tfs_path_relative_to_matlab_ws); addpath(ga_synthetic_joints_tfs_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
 
-ga_calculateFunctions_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','calculateFunctions',filesep);
+ga_calculateFunctions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','calculateFunctions',filesep);
 ga_calculateFunctions_library_path = strcat(root_path,ga_calculateFunctions_path_relative_to_matlab_ws); addpath(ga_calculateFunctions_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
 
-ga_objective_functions_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','ga_objective_functions',filesep);
+ga_objective_functions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','ga_objective_functions',filesep);
 ga_objective_functions_library_path = strcat(root_path,ga_objective_functions_path_relative_to_matlab_ws); addpath(ga_objective_functions_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_objective_functions')
 
-ga_optimization_call_functions_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','ga_optimization_call_functions',filesep);
+ga_optimization_call_functions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','ga_optimization_call_functions',filesep);
 ga_optimization_call_functions_library_path = strcat(root_path,ga_optimization_call_functions_path_relative_to_matlab_ws); addpath(ga_optimization_call_functions_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_optimization_call_functions')
 
@@ -65,11 +65,12 @@ close all;
 %% Here call ga's
 generations = 750;
 population = 500;
-tolerance = 1e-04;
+tolerance = 1e-06;
 stall_limit = 50;
 %% 1.Metric with Total special anatomies
 degree = 'degree4';
 criterion = 'parallel';
+TOL = 1e-03;
 FitnessFunction1 = @(x)obj_fn_analytic_ikp_for_6dof_smm(x,degree,criterion); 
 
 nvars1 = 41;

@@ -1,10 +1,19 @@
-function [special_anatomies_of_structure] = calculateExhaustiveAnatomies_for_analytic_ikp(structure,degree,criterion,xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0)
+function [special_anatomies_of_structure] = calculateExhaustiveAnatomies_for_analytic_ikp(structure,degree,criterion,TOL,xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0)
 % Calculates all possible anatomies given the total number of pseudos and
 % the known pseudo step angle. returns total number of anatomies that
 % satisfy the conditions for analytic IKP solution of 6R manipulators
 
 % Thanks to Jos (10584) for allcomb.m code.
 % Downloaded from MAthWorks File Exchange @ : https://www.mathworks.com/matlabcentral/fileexchange/10064-allcomb-varargin
+
+% Obtain matlab_ws folder path on the pc
+current_path = cd; % pc-grafeio
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
+% Add libraries relative to matlab_ws folder
+conditions_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','special_anatomies_investigation','conditions',filesep);
+conditions_library_path = strcat(root_path,conditions_relative_to_matlab_ws); addpath(conditions_library_path);
+% addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/special_anatomies_investigation/conditions') % works only for pc-grafeio
 
 pseudo_step_angle = deg2rad(45);
 pseudo_limit_angle = pi/2;

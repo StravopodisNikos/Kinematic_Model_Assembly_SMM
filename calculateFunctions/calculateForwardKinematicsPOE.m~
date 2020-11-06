@@ -1,4 +1,4 @@
-function [g_ai,g_pj,Jsp,P_i_i1,gst] = calculateForwardKinematicsPOE(structure,nDoF_string,xi_ai_ref,xi_pj_ref,qa,qp_xacro_user_given,g_ai_ref,g_pj_ref,gst0)
+function [g_ai,g_pj,Jsp,P_i_i1,gst] = calculateForwardKinematicsPOE(structure,nDoF_string,xi_ai_ref,xi_pj_ref,qa,transformed_anatomy_vector,g_ai_ref,g_pj_ref,gst0)
 
 % Given the extracted(from optimization) structure it computes the forward
 % kinematics tfs and Spatial Jacobian of the SMM.
@@ -15,7 +15,9 @@ for i_cnt=1:nDoF
     exp_ai(:,:,i_cnt) = twistexp(xi_ai_ref(:,i_cnt),qa(i_cnt));
 end
 
-transformed_anatomy_vector = calculate_transformed_anatomy_vector(structure,nDoF_string,qp_xacro_user_given);
+% Anatomy vector is given structure-specific(depends to structu)
+% transformed_anatomy_vector =
+% calculate_transformed_anatomy_vector(structure,nDoF_string,qp_xacro_user_given);
 for j_cnt=1:size(transformed_anatomy_vector,2)
     exp_pj(:,:,j_cnt) = twistexp(xi_pj_ref(:,j_cnt),transformed_anatomy_vector(j_cnt));
 end

@@ -1,4 +1,4 @@
-function analyticIKP_anatomy_richness = obj_fn_analytic_ikp_for_6dof_smm(x,degree,criterion)
+function analyticIKP_anatomy_richness = obj_fn_analytic_ikp_for_6dof_smm(x,degree,criterion,TOL)
 % x: structure definition-parameterization chromosome
 % Chromosome x is uilt considering the smm structure building principles
 % defined and the parameters given in the corresponding xacro file used for
@@ -32,11 +32,11 @@ function analyticIKP_anatomy_richness = obj_fn_analytic_ikp_for_6dof_smm(x,degre
 
 % Obtain matlab_ws folder path on the pc
 current_path = cd; % pc-grafeio
-root_path = string(split(current_path,'matlab_ws/'));
-root_path = strcat(root_path(1),'matlab_ws/');
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
 
 % Add libraries relative to matlab_ws folder
-ga_path_relative_to_matlab_ws = fullfile('Kinematic_Model_Assembly_SMM','ga_objective_functions','subroutines_executed_in_objective_fn',filesep);
+ga_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','ga_objective_functions','subroutines_executed_in_objective_fn',filesep);
 ga_library_path = strcat(root_path,ga_path_relative_to_matlab_ws); addpath(ga_library_path);
 % addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_objective_functions/subroutines_executed_in_objective_fn') % works only for pc-grafeio
 
@@ -107,7 +107,7 @@ assembly_parameters(11,3) = x_r(41);                % 5th dxl assembly pitch par
 [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,~,~,~] = structure_assembly_6dof(structure,assembly_parameters);
 
 %% III. Anatomy Richness - Here starts anatomy exhaustive calculation for the assembled structure
-[total_special_anatomies] = calculateExhaustiveAnatomies_for_analytic_ikp(structure,degree,criterion,xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0);
+[total_special_anatomies] = calculateExhaustiveAnatomies_for_analytic_ikp(structure,degree,criterion,TOL,xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0);
 
 %% V. Final structure score
 if total_special_anatomies == 0
