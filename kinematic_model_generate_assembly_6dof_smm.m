@@ -89,3 +89,19 @@ figure(TestFig); show(TestRobot,qa); hold on;
 figure(TestFig); drawframe(g_ai(:,:,1),0.15); hold on; drawframe(g_ai(:,:,2),0.15); hold on; drawframe(g_ai(:,:,3),0.15);  hold on; hold on; xi_a2_graph = drawtwist(xi_ai_anat(:,2)); hold on; xi_a3_graph = drawtwist(xi_ai_anat(:,3)); hold on;
 figure(TestFig); drawframe(g_ai(:,:,4),0.15); hold on; drawframe(g_ai(:,:,5),0.15); hold on; drawframe(g_ai(:,:,6),0.15); drawframe(gst,0.15); hold on; hold on; xi_a4_graph = drawtwist(xi_ai_anat(:,4)); hold on; xi_a5_graph = drawtwist(xi_ai_anat(:,5)); hold on; xi_a6_graph = drawtwist(xi_ai_anat(:,6)); hold on;
 figure(TestFig); drawframe(g_pj(:,:,1),0.15); hold on; drawframe(g_pj(:,:,2),0.15); hold on;  drawframe(g_pj(:,:,3),0.15); hold on; drawframe(g_pj(:,:,4),0.15); hold on;
+
+% 2. EXTRACT INERTIAS FOR GIVEN STRUCTURE & ANATOMY
+[gst_anat,xi_ai_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy_6dof(structure,assembly_parameters,qp_structure_dependent,xi_pj_ref,TestFig);
+[g_s_link_as_anat,M_s_link_as_anat] = calculateCoMmetalinks(M_s_com_k_i_anat,g_s_com_k_i_anat);
+
+% 3. CALCULATE MBS FOR 6DOF STRUCTURE & ANATOMY
+[MBS] = calculateMBS_6dof(structure,assembly_parameters,xi_ai_ref,xi_pj_ref,qp_structure_dependent,TestFig);
+
+% 4. Now that metalinks COM were found the Metalink Inertia Matrix|Body
+% frame is found
+[M_b_link_as2] = calculateMetalinkInertiaMatrixBody(g_s_link_as_anat,M_s_link_as_anat); % this is the good one
+
+% 5.CONSTRUCT LINK BODY JACOBIANS ANG GENERALIZED INERTIA MATRIX
+[J_b_sli2] = calculateCoM_BodyJacobians_for_anat_6dof(xi_ai_anat, qa, g_s_link_as_anat );  % this is the good one
+[M_b2] = calculateGIM(J_b_sli2,M_b_link_as2);  % this is the good one
+M_b_matlab = massMatrix(TestRobot,qa);

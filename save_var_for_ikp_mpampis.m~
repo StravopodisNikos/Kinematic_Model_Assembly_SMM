@@ -1,0 +1,51 @@
+function var_saved = save_var_for_ikp_mpampis(structure,xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,qp_structure_dependent,test_file_name)
+% Used to replace next line in kinematic_generate_assembly.m file
+% save('ikp_test_structure4_6_11_20.mat','structure','qp_structure_dependent','xi_ai_ref','xi_pj_ref','g_ai_ref','g_pj_ref','gst0')
+% Generates matrices of fixed length (maximum) and saves zero values in
+% each position that no pseudo exists
+
+% Allocates fixed length arrays of pseudos
+max_pseudos_3dof = 4;
+
+for j_cnt=1:max_pseudos_3dof
+    g_pj_ref_fixed_length(:,:,j_cnt) = zeros(4);
+    xi_pj_ref_fixed_length(:,j_cnt) = zeros(6,1);
+    qp_fixed_length(j_cnt) = 0;
+end
+
+% Reads the 4 strings given in positions 2,3 - 5,6 of structure. These
+% refer to existence/connectivity of pseudo modules of the chain
+error_found = false;
+j_cnt = 0;
+for pseudo_cnt=2:6
+    if pseudo_cnt == 4 
+        % do nothing because reads active string
+    else
+        j_cnt = j_cnt + 1;
+        % here 2,3,5,6 cases
+        switch structure(pseudo_cnt,:)
+            case 'x9'
+                % do nothing because already set zero values
+            case 'x21'
+                pseudo_exists = pseudo_exists + 1;
+                g_pj_ref_fixed_length(:,:,j_cnt) = g_pj_ref;
+                
+            case 'x31'
+                pseudo_exists = pseudo_exists + 1;
+                
+            otherwise
+                error_found = true;
+        end
+    end
+end
+
+% Saves modified data
+if error_found
+    var_saved = false;
+    warning('[save_var_for_ikp_mpampis]: strings not VALID!')
+else
+    save(test_file_name,'structure','qp_fixed_length','xi_ai_ref','xi_pj_ref_fixed_length','g_ai_ref','g_pj_ref_fixed_length','gst0')
+    var_saved = true;
+end
+
+end

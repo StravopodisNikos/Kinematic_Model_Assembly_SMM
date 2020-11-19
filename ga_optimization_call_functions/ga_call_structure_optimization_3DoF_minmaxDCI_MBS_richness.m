@@ -22,14 +22,18 @@ addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_objective_functions')
 addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_optimization_call_functions')
+addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/ga_custom_gamultiobj_functions')
+
 clc;
 clear;
 close all;
 
 %% Here call ga's
-generations = 150;
-population = 150;
-tolerance = 1e-04;
+generations = 500;
+population = 500;
+tolerance = 1e-03;
+crossover_fraction = 0.95; % added to optimize mixed integer ga run
+elite_count = 0.15*population; % added to optimize mixed integer ga run
 stall_limit = 35;
 %% 1.Metric with min MBS
 % % FitnessFunction1 = @(x)obj_fn_mass_balancing_structure_optimization_minMBS(x); 
@@ -73,18 +77,21 @@ FitnessFunctions = @(x)[obj_fn_mass_balancing_structure_optimization_minMBS(x),o
 nvars1 = 14;
 A1 = []; b1 = [];
 Aeq1 = []; beq1 = [];
-% No IntCon here!
+% No IntCon here, it is declared in each custom function
 %      x1   x2   x3     x4      x5      x6     x7      x8        x9     x10      x11      x12     x13     x14 
 LB1 = [1    2    1   -0.075  -0.050  -1.5708 -0.055  -0.050  -1.5708  -0.075   -0.050   -1.5708    0       0];
-UB3 = [3.9999    3.9999    3.9999    0.050   0.050   1.5708  0.025   0.050   1.5708   0.050    0.050    1.5708    1.9999       1.9999];
-
+UB3 = [3    3    3    0.050   0.050   1.5708  0.025   0.050   1.5708   0.050    0.050    1.5708    1       1];
+Bound = [LB1; UB3];
 
 % % Call gamultiob
-options = optimoptions('gamultiobj','Generations',generations,'PopulationSize',population,'Display','iter','StallGenLimit',50,'FunctionTolerance',tolerance,'UseParallel', true, 'UseVectorized', false);
+options = optimoptions('gamultiobj','CreationFcn', @mixed_int_pop_gamult,...
+                                    'MutationFcn', @mixed_int_mutation_gamult,...
+                                    'CrossoverFcn',@mixed_int_crossover_gamult,...
+                                    'Generations',generations,'PopulationSize',population,'PopInitRange',Bound,'Display','iter','CrossoverFraction',crossover_fraction,'StallGenLimit',stall_limit,'FunctionTolerance',tolerance,'UseParallel', true, 'UseVectorized', false);
 tic;
 [X_mult,Fval_mult,exitflag_mult,output_mult] = gamultiobj(FitnessFunctions,nvars1,A1,b1,Aeq1,beq1,LB1,UB3,[],options);
 toc;
-save('ga_test_mult_4_11_20.mat','generations','population','tolerance','stall_limit','X_mult','Fval_mult','exitflag_mult','output_mult')
+save('ga_test_mult_12_11_20.mat','generations','population','tolerance','stall_limit','X_mult','Fval_mult','exitflag_mult','output_mult')
 
 % tic;
 % [x2,fval2,exitflag2,output2] = gamultiobj(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB2,UB2,[],options);

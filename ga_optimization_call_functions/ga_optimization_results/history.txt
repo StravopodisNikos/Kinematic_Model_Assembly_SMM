@@ -1,0 +1,3 @@
+number  name		            	 comment
+1.	ga_test_mult_4_11_20.mat 	 first long run for min/max MBS structure optimization, pseudo connectivity was not integer! Not yet visual evaluation(12.11.20) Visualized and dicussed with Vassilis (16.11) evaluate_ga_test_mult_4_11_20.txt file contains results. Next is visualization on all anatomies characteristics.
+2.	ga_test_mult_11_11_20.mat 	 only for testing custom fn for min/max MBS structure optimization, pseudo connectivity was integer! Will rerun with better options!
