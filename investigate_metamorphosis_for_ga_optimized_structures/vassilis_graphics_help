@@ -1,0 +1,47 @@
+MBS_i_new = floor(MBS_i)
+conncomp(MBS_i_new)
+help real2int
+help double2int
+int32(MBS_i_new)
+conncomp(MBS_i_new)
+help conncomp
+conndef(4,'minimal')
+[A,B] = find(MBS_i_new==1)
+A = find(MBS_i_new==1)
+Z = zeros(size(tp1))
+Z(A) = 1
+conncomp(Z)
+conncomp(int32(Z))
+bwconncomp(Z)
+BW1 = bwconncomp(Z)
+BW1.PixelIdxList
+BW1.PixelIdxList(1)
+BW1.PixelIdxList{1}
+Z2 = zeros(size(tp1))
+Z(BW1.PixelIdxList{1}) = 1
+Z2(BW1.PixelIdxList{1}) = 1
+v = VideoWriter('alhteia2.avi');
+open(v);
+figure;
+set(gca,'nextplot','replacechildren');
+for i=1:size(tp1,1)
+scatter3(reshape(tp2(i,:,:,:),[1 125]), reshape(tp3(i,:,:,:),[1 125]), reshape(tp4(i,:,:,:),[1 125]), 50, reshape(Z2(i,:,:,:),[1 125]), 'filled');
+frame = getframe;
+for j=1:50
+writeVideo(v,frame);
+end
+end
+close(v);
+Z2(BW1.PixelIdxList{2}) = 1.5
+v = VideoWriter('alhteia3.avi');
+open(v);
+figure;
+set(gca,'nextplot','replacechildren');
+for i=1:size(tp1,1)
+scatter3(reshape(tp2(i,:,:,:),[1 125]), reshape(tp3(i,:,:,:),[1 125]), reshape(tp4(i,:,:,:),[1 125]), 50, reshape(Z2(i,:,:,:),[1 125]), 'filled');
+frame = getframe;
+for j=1:50
+writeVideo(v,frame);
+end
+end
+close(v);

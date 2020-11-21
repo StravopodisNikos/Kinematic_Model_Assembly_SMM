@@ -1,5 +1,6 @@
 function [Jsp_i_column] = calculateSpatialJacobianColumns(xi_ai_ref,g_for_sp,i_cnt)
-% Computes the Jacobians of the SMM
+% Computes the Jacobians of the SMM, called only inseide the FKP POE
+% function!
 
 if i_cnt==1
     Jsp_i_column = xi_ai_ref(:,i_cnt);
