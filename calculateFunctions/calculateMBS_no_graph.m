@@ -3,7 +3,13 @@ function MBS = calculateMBS_no_graph(structure,assembly_parameters,xi_ai_ref,xi_
 % The robot structure must be previously extracted
 
 % Include libraries
-addpath('/home/nikos/matlab_ws/geom3d_library/geom3d')
+% Obtain matlab_ws folder path on the pc
+current_path = cd; % pc-grafeio
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
+
+% Add libraries relative to matlab_ws folder
+geom3d_path_relative_to_matlab_ws = fullfile('matlab_ws','geom3d_library','geom3d',filesep); geom3d_library_path = strcat(root_path,geom3d_path_relative_to_matlab_ws); addpath(geom3d_library_path);
 
 nDoF = size(xi_ai_ref,2);           % determine total number of active joints by number of columns
 

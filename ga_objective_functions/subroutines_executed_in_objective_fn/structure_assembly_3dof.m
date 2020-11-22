@@ -3,15 +3,34 @@ function [xi_ai_ref,xi_pj_ref,g_ai_ref,g_pj_ref,gst0,M_s_com_k_i,g_s_com_k_i,wro
 % kinematic_model_generate_assembly_smm.m
 % Generates active-passive twists and joints-tcp frame tfs of assembled
 % robot
-addpath('/home/nikos/matlab_ws/screw_kinematics_library/screws')
-addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
-addpath('/home/nikos/matlab_ws/screw_dynamics')
-
-addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM')
-addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
-addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
-addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
-
+%% Add paths to all functions:
+% Obtain matlab_ws folder path on the pc
+current_path = cd; % pc-grafeio
+root_path = string(split(current_path,'matlab_ws'));
+root_path = root_path(1);
+% Add libraries relative to matlab_ws folder
+screws_path_relative_to_matlab_ws = fullfile('matlab_ws','screw_kinematics_library','screws',filesep);
+screws_library_path = strcat(root_path,screws_path_relative_to_matlab_ws); addpath(screws_library_path);
+% addpath('/home/nikos/matlab_ws/screw_kinematics_library/screws')
+util_path_relative_to_matlab_ws = fullfile('matlab_ws','screw_kinematics_library','util',filesep);
+util_library_path = strcat(root_path,util_path_relative_to_matlab_ws); addpath(util_library_path);
+% addpath('/home/nikos/matlab_ws/screw_kinematics_library/util')
+screw_dynamics_path_relative_to_matlab_ws = fullfile('matlab_ws','screw_dynamics',filesep);
+screw_dynamics_library_path = strcat(root_path,screw_dynamics_path_relative_to_matlab_ws); addpath(screw_dynamics_library_path);
+% addpath('/home/nikos/matlab_ws/screw_dynamics')
+Kinematic_Model_Assembly_SMM_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM',filesep);
+Kinematic_Model_Assembly_SMM_library_path = strcat(root_path,Kinematic_Model_Assembly_SMM_path_relative_to_matlab_ws); addpath(Kinematic_Model_Assembly_SMM_library_path);
+% addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM')
+building_functions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','building_functions',filesep);
+building_functions_library_path = strcat(root_path,building_functions_path_relative_to_matlab_ws); addpath(building_functions_library_path);
+% addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/building_functions')
+synthetic_joints_tfs_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','synthetic_joints_tfs',filesep);
+synthetic_joints_tfs_library_path = strcat(root_path,synthetic_joints_tfs_path_relative_to_matlab_ws); addpath(synthetic_joints_tfs_library_path);
+% addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/synthetic_joints_tfs')
+calculateFunctions_path_relative_to_matlab_ws = fullfile('matlab_ws','Kinematic_Model_Assembly_SMM','calculateFunctions',filesep);
+calculateFunctions_library_path = strcat(root_path,calculateFunctions_path_relative_to_matlab_ws); addpath(calculateFunctions_library_path);
+% addpath('/home/nikos/matlab_ws/Kinematic_Model_Assembly_SMM/calculateFunctions')
+ 
 
 % Input  -> structure:  7x2 string array
 % Output -> 
