@@ -1,4 +1,4 @@
-function LmdCI = calculateGlobalLamdaConditionIndex_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_anat,M_b_link_as_anat, Pi, gst0)
+function GLmdCI = calculateGlobalLamdaConditionIndex_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_anat,M_b_link_as_anat, Pi, gst0)
 % Function that returns Lamda Conditioning Index of manipulator in
 % tool-space. Used to study dynamic isotropy in tool-space
 
@@ -25,7 +25,6 @@ for ta2=-active_angle_limit(2):step_a2:active_angle_limit(2)
             Cspace_count = Cspace_count + 1;
 
             %% I.b. In this configuration(qa1.qa2,qa3) compute GIM
-            
             % calculateCoM_BodyJacobians_for_anat is better beacuse works
             % for all anatomies, but first the g_s_link_as(CoM frame of
             % each link @ desired anatomy) has to be specified. Here we are
@@ -37,7 +36,7 @@ for ta2=-active_angle_limit(2):step_a2:active_angle_limit(2)
             %%  I.c Compute Body Jacobian Matrix @ current configuration
             [~, Jbd,~] = calculateJacobians_for_assembled_structure('3dof', xi_ai_struct_ref, qa, Pi, gst0) ;
             
-            Jtool = calculateToolJacobian_3dof(Jbd,[0 0 0]'); % since the origin of the tool frame is studied here
+            Jtool = calculateToolJacobian_3dof(Jbd,[0 0 0]');
             %%  I.d Compute Lamda Matrix
             Lamda = inv(Jtool') * M_b * inv(Jtool);
             

@@ -21,15 +21,7 @@ ga_library_path = strcat(root_path,ga_path_relative_to_matlab_ws); addpath(ga_li
 
 terminate_ga_obj_fn = false;    % used to control ga
 
-%% I.  Assign structure parameters values
-logical wrong_string_structure;
-fixed_active_string_notation = 'x0';
-passive_under_string_notation = '21';
-
-%  I.1 Assembly sequence definition
-% Since no stribg values are produced in ga, matching must be first made
-% for x1,x2,x3
-%% Determine tpi pseudojoint angles
+%% I. Determine tpi pseudojoint angles
 step_angle = deg2rad(45);
 tpi0 = -1.5708;
 for k=1:4
@@ -45,27 +37,12 @@ if wrong_string_structure
 end
 
 if terminate_ga_obj_fn==false
-    
-% II.1 FWD KINEMATICS @ Reference Anatomy and configuration
-% nDoF = size(xi_ai_ref,2);
-% nPseudo = size(xi_pj_ref,2); 
+    %% III. Calculate anatomy transformations
+    qp_structure_dependent = calculate_transformed_anatomy_vector(structure,'3dof',qp_xacro_user_given);
 
-% qa = zeros(nDoF,1);     % Reference Configuration
-% qp = zeros(nPseudo,1);  % Reference Anatomy
-% [~,~,~,Pi_i1_ref,~] = calculateForwardKinematicsPOE(structure,xi_ai_ref,xi_pj_ref,qa,qp,g_ai_ref,g_pj_ref,gst0);
+    GlobalKinematicIsotropicIndex = calculateKinematicIsotropicIndex_3DoF(xi_ai_ref, Pi, gst0)
+    %% IV.
 
-%% III. Compute CoMi and Ms,Mb of metamorphic links @ Reference Anatomy
-%[g_s_link_as_ref,M_s_link_as_ref] = calculateCoMmetalinks(M_s_com_k_i,g_s_com_k_i);
-%[M_b_link_as_ref] = calculateMetalinkInertiaMatrixBody(g_s_link_as_ref,M_s_link_as_ref);
-
-%% IV. MBS  @ Reference Anatomy
-% MBS_ref = calculateMBS_no_graph(structure,assembly_parameters,xi_ai_ref,xi_pj_ref,qp);
-
-%% V. Anatomy Richness - Here starts anatomy exhaustive calculation
-[max_MBS_anat] = calculateExhaustiveAnatomies_for_MBS(extracted_structure,extracted_assembly_parameters,'max',xi_ai_ref,xi_pj_ref);
-
-%% V. Final structure score
-MB_star = max_MBS_anat;
 end
 
 end
