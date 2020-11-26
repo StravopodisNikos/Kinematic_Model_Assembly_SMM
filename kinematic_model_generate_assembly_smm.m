@@ -110,7 +110,7 @@ figure(TestFig); xi1_graph = drawtwist(Jsp(:,1)); hold on; xi2_graph = drawtwist
 
 % Build the Jacobians
 % [Jsp, Jbd, gst1] = calculateJacobians_for_assembled_structure('3dof',xi_ai_ref,qa, Pi, gst0);
-GlobalKinematicIsotropicIndex = calculateKinematicIsotropicIndex_3DoF(xi_ai_ref, Pi, gst0);
+% GlobalKinematicIsotropicIndex = calculateKinematicIsotropicIndex_3DoF(xi_ai_ref, Pi, gst0);
 
 % 2.EXTRACT INERTIAS FOR GIVEN STRUCTURE @ REFERENCE ANATOMY
 % Evaluate calculated Link Inertias(works fine)
@@ -139,6 +139,18 @@ figure(TestFig); xi_a2_graph_anat = drawtwist(xi_ai_anat(:,2)); hold on; xi_a3_g
 [M_b1] = calculateGIM(J_b_sli1,M_b_link_as1); %
 [M_b2] = calculateGIM(J_b_sli2,M_b_link_as2);  % this is the good one
 M_b_matlab = massMatrix(TestRobot,qa);
+% here check old files(screw_dynamics folder) for mass-coriolis
+for i_cnt=1:3
+    exp_ai(:,:,i_cnt) = twistexp(xi_ai_anat(:,i_cnt),qa(i_cnt));
+    g_sli_anat(:,:,i_cnt) = eye(4);
+    g_sli_anat(1:3,4,i_cnt) = g_s_link_as_anat(:,1,i_cnt);
+end
+Pi_for_old(:,:,1) = eye(4);
+Pi_for_old(:,:,2) = eye(4);
+qdot = [1 1 1]';
+[M_POE,~,C_POE] = compute_Mij_429_3DoF(xi_ai_anat, exp_ai, Pi_for_old, g_sli_anat, M_b_link_as2, [1 1 1]');
+C_b2 = C_POE * qdot;
+C_matlab = velocityProduct(TestRobot,qa,qdot);
 
 % 5. Check lamda conditioning index fn
  LmdCI = calculateGlobalLamdaConditionIndex_3DoF(xi_ai_anat,xi_ai_ref,g_s_link_as_anat,M_b_link_as2, Pi, gst0);

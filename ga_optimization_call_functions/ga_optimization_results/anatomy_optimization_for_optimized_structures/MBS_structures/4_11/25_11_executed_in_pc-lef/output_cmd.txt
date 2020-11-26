@@ -1,0 +1,79 @@
+                              Average            Average
+Generation   Func-count    Pareto distance    Pareto spread
+    1           250                 1                 1
+    2           500         0.0169224          0.974159
+    3           750         0.0147105          0.822979
+    4          1000         0.0168755          0.919583
+    5          1250         0.0126532            1.3694
+    6          1500         0.0076661           1.01984
+    7          1750        0.00630867           1.99393
+    8          2000        0.00619929           1.95935
+    9          2250        0.00619929           1.95935
+   10          2500        0.00619929           1.95935
+   11          2750        0.00619929           1.95935
+   12          3000        0.00619929           1.95935
+   13          3250        0.00619929           1.95935
+   14          3500        0.00619929           1.95935
+   15          3750        0.00619929           1.95935
+   16          4000        0.00619929           1.95935
+   17          4250        0.00619929           1.95935
+   18          4500        0.00619929           1.95935
+   19          4750        0.00619929           1.95935
+   20          5000        0.00619929           1.95935
+   21          5250        0.00619929           1.95935
+   22          5500        0.00629256           1.01421
+Optimization terminated: average change in the spread of Pareto solutions less than options.FunctionTolerance.
+Elapsed time is 4321.382371 seconds.
+
+                              Average            Average
+Generation   Func-count    Pareto distance    Pareto spread
+    1           250                 1                 1
+    2           500        0.00734984          0.948816
+    3           750        0.00467771          0.636824
+    4          1000        0.00417088           1.00169
+    5          1250        0.00204714           1.00157
+    6          1500         0.0146197                 1
+    7          1750         0.0102943           1.00812
+    8          2000                 0                 1
+    9          2250                 0                 0
+   10          2500                 0                 0
+   11          2750                 0                 0
+   12          3000                 0                 0
+   13          3250                 0                 0
+   14          3500                 0                 0
+   15          3750                 0                 0
+   16          4000                 0                 0
+   17          4250                 0                 0
+   18          4500                 0                 0
+   19          4750                 0                 0
+   20          5000                 0                 0
+   21          5250                 0                 0
+Optimization terminated: average change in the spread of Pareto solutions less than options.FunctionTolerance.
+Elapsed time is 4122.240730 seconds.
+
+                              Average            Average
+Generation   Func-count    Pareto distance    Pareto spread
+    1           250                 1                 1
+    2           500         0.0116624           1.33883
+    3           750        0.00538748           3.22489
+    4          1000        0.00503026           3.46478
+    5          1250        0.00503026           3.46478
+    6          1500        0.00503026           3.46478
+    7          1750        0.00503026           3.46478
+    8          2000        0.00503026           3.46478
+    9          2250        0.00503026           3.46478
+   10          2500        0.00503026           3.46478
+   11          2750        0.00503026           3.46478
+   12          3000        0.00503026           3.46478
+   13          3250        0.00503026           3.46478
+   14          3500        0.00503026           3.46478
+   15          3750        0.00503026           3.46478
+   16          4000        0.00503026           3.46478
+   17          4250        0.00503026           3.46478
+   18          4500        0.00503026           3.46478
+   19          4750        0.00503026           3.46478
+   20          5000        0.00503026           3.46478
+Optimization terminated: average change in the spread of Pareto solutions less than options.FunctionTolerance.
+Elapsed time is 3928.825895 seconds.
+IdleTimeout has been reached.
+Parallel pool using the 'local' profile is shutting down.

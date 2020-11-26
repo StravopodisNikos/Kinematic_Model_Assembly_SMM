@@ -1,0 +1,27 @@
+FUNCTION SEQUENE
+
+structure_assembly_3dof
+
+calculateForwardKinematicsPOE
+
+calculateGlobalLamdaConditionIndex_3DoF
+
+	calculateCoM_BodyJacobians_for_anat
+
+	M_b = calculateGIM
+
+	[~, Jbd] = calculateJacobians_for_assembled_structure(nDoF_string,xi_ai_ref,exp_ai, Pi, gst0) 
+
+	Lamda
+
+FUNCTION SEQUENCE FOR DYNAMIC ISOTROPY INVESTIGATION FOR ANATOMIES OF MBS-OPTIMIZED STRUCTURES
+
+ga_call_anatomy_optimization_isotropy_investigation.m
+			||
+			\/	
+obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex --> NEEDS (x,extracted_structure,extracted_assembly_parameters)
+											||
+obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex					||		
+											||
+											\/
+											

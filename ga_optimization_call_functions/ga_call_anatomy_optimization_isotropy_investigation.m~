@@ -75,8 +75,8 @@ ga_assembly_parameters(4,3) = 0.6594;                   % 2nd dxl assembly pitch
 % 1. Global Lamda Condition Index(tool-space dynamic isotropy)
 % 2. Global Dynamic Manipulability Index(config-space dynamic manipulability)
 
-FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,ga_structure,ga_assembly_parameters),...
-                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,ga_structure,ga_assembly_parameters)];
+FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,extracted_structure,extracted_assembly_parameters),...
+                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,extracted_structure,extracted_assembly_parameters)];
 % Settings
 nvars1 = 4;
 A1 = []; b1 = [];
@@ -129,8 +129,8 @@ ga_assembly_parameters(4,3) = 1.1134;                   % 2nd dxl assembly pitch
 % 1. Global Lamda Condition Index(tool-space dynamic isotropy)
 % 2. Global Dynamic Manipulability Index(config-space dynamic manipulability)
 
-FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,ga_structure,ga_assembly_parameters),...
-                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,ga_structure,ga_assembly_parameters)];
+FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,extracted_structure,extracted_assembly_parameters),...
+                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,extracted_structure,extracted_assembly_parameters)];
 % Settings
 nvars1 = 4;
 A1 = []; b1 = [];
@@ -184,8 +184,8 @@ ga_assembly_parameters(4,3) = 1.1225;                   % 2nd dxl assembly pitch
 % 1. Global Lamda Condition Index(tool-space dynamic isotropy)
 % 2. Global Dynamic Manipulability Index(config-space dynamic manipulability)
 
-FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,ga_structure,ga_assembly_parameters),...
-                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,ga_structure,ga_assembly_parameters)];
+FitnessFunctions = @(x)[obj_fn_dynamic_isotropy_anatomy_optimization_LamdaIndex(x,extracted_structure,extracted_assembly_parameters),...
+                        obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,extracted_structure,extracted_assembly_parameters)];
 % Settings
 nvars1 = 4;
 A1 = []; b1 = [];
@@ -210,4 +210,4 @@ options = optimoptions('gamultiobj','CreationFcn', @mixed_int_pop_gamult,...
 tic;
 [X_mult3,Fval_mult3,exitflag_mult3,output_mult3] = gamultiobj(FitnessFunctions,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],options);
 toc;
-save('s3_4_11_anatomy_optimization_dyn_isotropy_25_11_20.mat','generations','population','tolerance','stall_limit','X_mult3','Fval_mult3','exitflag_mult3','output_mult3','ga_structure_name');
+save('s3_4_11_anatomy_optimization_dyn_isotropy_25_11_20.mat','generations','population','tolerance','stall_limit','X_mult3','Fval_mult3','exitflag_mult3','output_mult2','ga_structure_name');

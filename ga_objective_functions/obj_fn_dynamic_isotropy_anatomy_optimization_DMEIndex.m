@@ -1,4 +1,4 @@
-function LmdCI_star = obj_fn_dynamic_isotropy_anatomy_optimization(x,extracted_structure,extracted_assembly_parameters)
+function LmdCI_star = obj_fn_dynamic_isotropy_anatomy_optimization_DMEIndex(x,extracted_structure,extracted_assembly_parameters)
 % This function optimizes the anatomy of a smm manipulator structure w.r.t kinematic
 % isotropy condition. the structure MUST previously be extracted.
 
@@ -41,12 +41,12 @@ if terminate_ga_obj_fn==false
     [~,~,~,Pi,~] = calculateForwardKinematicsPOE(extracted_structure,'3dof',xi_ai_struct_ref,xi_pj_ref,zeros(3,1),qp_structure_dependent,g_ai_ref,g_pj_ref,gst0);  
     
     %% IV. Calculate new twists and inertia matrices of ga anatomy @ zero configuration
-    [gst_anat,xi_ai_struct_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy_no_graph(extracted_structure,extracted_assembly_parameters,qp_structure_dependent,xi_pj_ref);
+    [~,xi_ai_struct_anat,M_s_com_k_i_anat,g_s_com_k_i_anat] = calculateCoM_ki_s_structure_anatomy_no_graph(extracted_structure,extracted_assembly_parameters,qp_structure_dependent,xi_pj_ref);
     [g_s_link_as_anat,M_s_link_as_anat] = calculateCoMmetalinks(M_s_com_k_i_anat,g_s_com_k_i_anat);
     [M_b_link_as_anat] = calculateMetalinkInertiaMatrixBody(g_s_link_as_anat,M_s_link_as_anat);
     
-    %% V. Calculate index at C-Space of ga anatomy @ zero configurationt
-    LmdCI = calculateGlobalLamdaConditionIndex_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_anat,M_b_link_as_anat, Pi, gst0);
+    %% V. Calculate index at C-Space of ga anatomy 
+    LmdCI = calculateGlobalDME_Index_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_anat,M_b_link_as_anat, Pi, gst0);
     
     LmdCI_star = LmdCI;
 end
