@@ -1,6 +1,6 @@
-function LmdCI = calculateGlobalLamdaConditionIndex_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_ref,M_b_link_as_ref, Pi, gst0)
-% Function that returns Lamda Conditioning Index of manipulator in
-% tool-space
+function GDME = calculateGlobalDME_Index_3DoF(xi_ai_struct_anat,xi_ai_struct_ref,g_s_link_as_anat,M_b_link_as_anat, Pi, gst0)
+% Function that returns Dynamic Manipulability Index of manipulator in
+% Conf-space. Used to study dynamic isotropy of anatomies
 
 % xi_ai_struct_anat -> active twists are recalculated for each anatomy!
 % This is done because inertia of the links must be recomputed for each new
@@ -25,29 +25,25 @@ for ta2=-active_angle_limit(2):step_a2:active_angle_limit(2)
             Cspace_count = Cspace_count + 1;
 
             %% I.b. In this configuration(qa1.qa2,qa3) compute GIM
-            
             % calculateCoM_BodyJacobians_for_anat is better beacuse works
             % for all anatomies, but first the g_s_link_as(CoM frame of
             % each link @ desired anatomy) has to be specified. Here we are
             % still working on reference, so all is ok(for methodology check: kinematic_model_generate_assembly_smm.m)
-            [J_b_sli] = calculateCoM_BodyJacobians_for_anat(xi_ai_struct_anat, qa, g_s_link_as_ref );
+            [J_b_sli] = calculateCoM_BodyJacobians_for_anat(xi_ai_struct_anat, qa, g_s_link_as_anat );
              
-            [M_b] = calculateGIM(J_b_sli,M_b_link_as_ref);
+            [M_b] = calculateGIM(J_b_sli,M_b_link_as_anat);
             
             %%  I.c Compute Body Jacobian Matrix @ current configuration
-            [~, Jbd] = calculateJacobians_for_assembled_structure(nDoF_string, xi_ai_struct_ref, qa, Pi, gst0) ;
+            [~, Jbd,~] = calculateJacobians_for_assembled_structure('3dof', xi_ai_struct_ref, qa, Pi, gst0) ;
             
-            %%  I.d Compute Lamda Matrix
-            Lamda = inv(Jbd') * M_b * inv(Jbd);
-            
-            %% I.e SVD of Lamda
-            S = svd(Lamda);
-            
-            LmdCI(Cspace_count) = min(S) / max(S);
-        end
+            Jtool = calculateToolJacobian_3dof(Jbd,[0 0 0]');
+            %%  I.d Compute DME
+            DME(Cspace_count) = abs(det(Jtool)/det(M_b));
+
+         end
 end
 
 % Since LmdCI has an upper bound  of one. The global index is the max LmdCI
 % calculated'
-
+GDME = 1 / max(DME);
 end
