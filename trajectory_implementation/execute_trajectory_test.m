@@ -1,10 +1,12 @@
 % Trajectory Implementation on Isotropic Extracted anatomies TEST FILE
-% Implementation main file:
+% This is the basis for test file:
 % optimized_structure_anatomy_trajectory_implementation_test.m
 
 % Author: Nikolaos Stravopodis
 
 % Research on Optimal Trajectory Implementation of SMM 
+
+% last sync with pc-lef 18-12-20 18:43
 
 %% Add paths to all functions:
 % Obtain matlab_ws folder path on the pc
@@ -178,10 +180,9 @@ ode_derivative_Fcn = @(t,x) PID_computed_torque_control_3DoF_MMD(x_d,ddq_d(:,101
 % To calculate torque the derivative fn is called inside for...
 Vold = calculatePotentialEnergyMatrix_anat_3dof(x0(1:3),xi_ai_anat,g_sli_anat,M_b_link_as2);
 for ode_cnt=1:size(t,1)
-    [real_torque(:,ode_cnt),V(ode_cnt,:)] = postODEoutput_PID_computed_torque_control_3DoF_MMD(t(ode_cnt),x(ode_cnt,:)',x_d,ddq_d(:,101),dt,s_for_compute_Mij_429_3DoF,s_pid,Vold);
+    [real_torque(ode_cnt,:),V(ode_cnt,:)] = postODEoutput_PID_computed_torque_control_3DoF_MMD(x(ode_cnt,:)',x_d,ddq_d(:,101),dt,s_for_compute_Mij_429_3DoF,s_pid,Vold);
     Vold = V(ode_cnt,:);
 end
 
 %% PLOTS
 % Plot1-> q(t), Plot2-> dq(t), Plot3-> torque(t)
-figure; plot(t,x(:,1),'-o')

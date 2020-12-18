@@ -1,6 +1,8 @@
-function [torque,V] = postODEoutput_PID_computed_torque_control_3DoF_MMD(t,x,x_d,ddq_d,dt,meta_params_struct,s_pid,Vold)
+function [torque,V] = postODEoutput_PID_computed_torque_control_3DoF_MMD(x,x_d,ddq_d,dt,meta_params_struct,s_pid,Vold)
 % This function is executed for each [x] state received from ode113 @
 % specified t. No persistent variables here. Simple (re)calculation.
+
+% last sync with pc-lef 18-12-20 18:43
 
 % STATES:
 % q_d = 3x1 vector for desired final joint position
@@ -26,9 +28,6 @@ ki = i_factor * (kp*kd);
 Kp = I .* kp;
 Kd = I .* kd;
 Ki = I .* ki;
-A = [O I O; O O I;-Ki -Kp -Kd]; 
-B = [O;  O; I];
-w = [10 10 10]';
 
 %% Torque output must be extracted using outputFcn!
 % Decoupled controller unit
@@ -63,5 +62,6 @@ delta_q = x(4:6) * dt;          % approximation for Delta C-Space of each joint
 N = C*x(4:6) + G;
 % Calculate torque
 torque = M*(ddq_d-u) + N;       % 3x1 robot's motor torque input vector [Nm]
-    
+
+torque = torque';
 end
