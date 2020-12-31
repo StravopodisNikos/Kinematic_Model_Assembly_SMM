@@ -28,7 +28,7 @@ ga_assembly_parameters(4,2) = 0.5987;                   % 1st dxl assembly pitch
 ga_assembly_parameters(4,3) = 0.6594;                   % 2nd dxl assembly pitch parameter
 
 %% OPTIMAL ANATOMIES EXTRACTED FOR STRUCTURE s1_ga_test_mult_4_11_20
-% optimal_anatomies extracted from 25,26_11_executed_in_pc_lef
+% optimal_anatomies extracted from [25,26_11/16b-12-20]_executed_in_pc_lef
 %                                                 θp2(x)
 s1_ga_test_mult_4_11_20_opt_anat(1,:) =  [ 9.0000   2.0000   9.0000    3.0000 ];  %14.6095   0.0027 
 s1_ga_test_mult_4_11_20_opt_anat(2,:) =  [ 9.0000   7.0000   4.0000    2.0000 ];  %14.3670   0.0038 
@@ -36,7 +36,7 @@ s1_ga_test_mult_4_11_20_opt_anat(3,:) =  [ 9.0000   9.0000   10.0000   3.0000 ];
 s1_ga_test_mult_4_11_20_opt_anat(4,:) =  [ 10.0000   2.0000   11.0000   6.0000];  %15.9332   0.0020
 s1_ga_test_mult_4_11_20_opt_anat(5,:) =  [ 10.0000   7.0000   12.0000   5.0000];  %15.1380   0.0020
 s1_ga_test_mult_4_11_20_opt_anat(6,:) =  [ 10.0000   4.0000   2.0000    2.0000];  %14.1808   0.0040
-
+s1_ga_test_mult_4_11_20_opt_anat(7,:) =  [ 9.0000   6.0000   5.0000     1.0000];  %14.2624   0.0033
 save('s1_4_11_optimized_structure_anatomies.mat','ga_structure_name','ga_structure','ga_assembly_parameters','s1_ga_test_mult_4_11_20_opt_anat');
 
 %% MATFILE2
@@ -67,10 +67,11 @@ ga_assembly_parameters(4,2) = 1.2028;                   % 1st dxl assembly pitch
 ga_assembly_parameters(4,3) = 1.1134;                   % 2nd dxl assembly pitch parameter
 
 %% OPTIMAL ANATOMIES EXTRACTED FOR STRUCTURE s1_ga_test_mult_4_11_20
-% optimal_anatomies extracted from 25,26_11_executed_in_pc_lef
+% optimal_anatomies extracted from [25,26_11/16b-12-20]_executed_in_pc_lef
 %                                                                         θp4(x)
 s2_ga_test_mult_4_11_20_opt_anat(1,:) =  [ 7.0000   12.0000    3.0000    7.0000 ];  %13.2597    0.0014
 s2_ga_test_mult_4_11_20_opt_anat(2,:) =  [ 7.0000   12.0000    4.0000    9.0000 ];  %13.3935    0.0014 
+s2_ga_test_mult_4_11_20_opt_anat(3,:) =  [ 7.0000   13.0000    4.0000    7.0000 ];  %13.1388    0.0014
 
 save('s2_4_11_optimized_structure_anatomies.mat','ga_structure_name','ga_structure','ga_assembly_parameters','s2_ga_test_mult_4_11_20_opt_anat');
 
@@ -102,11 +103,15 @@ ga_assembly_parameters(4,2) = 0.9486;                   % 1st dxl assembly pitch
 ga_assembly_parameters(4,3) = 1.1225;                   % 2nd dxl assembly pitch parameter
 
 %% OPTIMAL ANATOMIES EXTRACTED FOR STRUCTURE s1_ga_test_mult_4_11_20
-% optimal_anatomies extracted from 25,26_11_executed_in_pc_lef
+% Extracting procedure from matfiles:
+% 1. horzcat(X_mult3,Fval_mult3)
+% 2. 
+% optimal_anatomies extracted from [25,26_11/16b-12-20]_executed_in_pc_lef
 %                                                    θp2(x)              θp4(x)
 s3_ga_test_mult_4_11_20_opt_anat(1,:) =  [ 8.0000    8.0000    5.0000    7.0000 ];  %11.6569    0.0014
 s3_ga_test_mult_4_11_20_opt_anat(2,:) =  [ 9.0000    8.0000    4.0000   10.0000 ];  %11.7682    0.0013
 s3_ga_test_mult_4_11_20_opt_anat(3,:) =  [ 10.0000   11.0000   4.0000   12.0000 ];  %11.8152    0.0013
 s3_ga_test_mult_4_11_20_opt_anat(4,:) =  [ 10.0000    5.0000    5.0000    4.0000];  %12.4256    0.0012
+% optimal_anatomies extracted from 25,26_11_executed_in_pc_lef 
 
 save('s3_4_11_optimized_structure_anatomies.mat','ga_structure_name','ga_structure','ga_assembly_parameters','s3_ga_test_mult_4_11_20_opt_anat');
