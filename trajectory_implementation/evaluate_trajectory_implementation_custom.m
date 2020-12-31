@@ -9,16 +9,42 @@ close all;
 
 %% SET TRAJECTORY PROPERTIES
 % C-space task points
-way_pts = [1.5708 -0.84 0.15 -0.7854 1.5708  ;...     %q1
-           1.5708 1.35 -0.58  0.7854 -1.5708  ;...    %q2
-           1.5708 2.14 -2.45  1.5708 -1.2456 ];...    %q3
-% time steps           
-time_pts = [0  5  10  15   20]';    
-% PID Parametes
-field1 = 'kp';        value1 = 300;
-field2 = 'ki_factor'; value2 = 0.4; % for closed loop stability ki < kp * kd => ki = i_factor * (kp * kd), i_factor \in [0,1]
-field3 = 'kd';        value3 = 10;
-s_pid = struct(field1,value1,field2,value2,field3,value3);
+way_pts = [1.5708 -0.54 0.15  -0.7854  0.7854  ;...     %q1
+           1.5708 1.05 -0.58   0.7854  0       ;...    %q2
+           1.5708 2.14 -2.45  -1.5708  -0.5   ];...    %q3
+% time steps
+t_start = 0; t_finish = 10;  % [sec] 
+time_pts = linspace(t_start,t_finish,size(way_pts,2))'; 
+% PD Parametes(manual empirical tuning based on Lynch)
+wmega  = 10;
+zeta   = 1;
+field1 = 'kp';        value1 = wmega^2;
+field2 = 'kd';        value2 = zeta * wmega;
+s_pd  = struct(field1,value1,field2,value2);
+p = [1 s_pd.kd s_pd.kp];
+r = roots(p)
+tct = 1/abs(min(real(r)))
+% PID Parametes(manual empirical tuning based on Lynch)
+wmega  = 400;
+zeta   = 0.9;
+field1 = 'kp';        value1 = wmega^2;
+field2 = 'ki_factor'; value2 = 0.005; % for closed loop stability ki < kp * kd => ki = i_factor * (kp * kd), i_factor \in [0,1]
+field3 = 'kd';        value3 = 16 * zeta * wmega;
+s_pid  = struct(field1,value1,field2,value2,field3,value3);
+% LQR Parameters(given by ga: call_optimized_lqr_min_error_state.m)
+% LAST GA RESULT(100,10,1e-03): Fval = 2.8886e-05
+% X = 1.0e+06 * 5.1567    1.4012e-06    3.1527    6.8562    3.5358    0.0639    8.2787    1.4684    9.5388    1.8765    2.1255e-06    0.1055
+q_eps  = 1.0e+04 * [9.8050 100*4.2142 100*7.9832];    % penaltizes high integral error
+q_e    = 1.0e+04 * [6.0816 100*5.9070 100*8.7956];    % penaltizes position error
+q_de   = 1.0e+04 * [5.0987 100*0.0863 100*0.7183];    % penaltizes velocity error
+r_pen1   = 1.0e+04 * 0.05;         
+r_pen2   = 1.0e+04 * 10*0.05;     
+r_pen3   = 1.0e+04 * 10*1.05;      
+field1 = 'Qpen';        value1 = diag(horzcat(q_eps,q_e,q_de)); % 9x9
+field2 = 'Rpen';        value2 = diag([r_pen1 r_pen2 r_pen3]);  % 3x3    
+field3 = 'Nnonlin';     value3 = zeros(9,3);
+s_lqr  = struct(field1,value1,field2,value2,field3,value3);
+
 %% LOAD STRUCTURES
 fixed_active_string_notation = 'x0';
 no_passive_string_notation = 'x9';    % -> in ga Int Value:1
@@ -115,7 +141,9 @@ s3_ga_test_mult_4_11_20_opt_anat(2,:) =  [ 9.0000    8.0000    4.0000   10.0000 
 s3_ga_test_mult_4_11_20_opt_anat(3,:) =  [ 10.0000   11.0000   4.0000   12.0000 ];  %11.8152    0.0013
 s3_ga_test_mult_4_11_20_opt_anat(4,:) =  [ 10.0000    5.0000    5.0000    4.0000];  %12.4256    0.0012
 
-%% EXECUTE TRAJECTORY FOR EACH ANATOMY with CUSTOM PID MOTION CONTROL!
-optimized_structure_anatomy_trajectory_implementation_custom(ga_structure0,ga_assembly_parameters0,s0_rand_s_rand_anat(1,:),way_pts,time_pts,s_pid,'PID[100-0.4-25] MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:0.1] ');
+%% EXECUTE TRAJECTORY FOR EACH ANATOMY with CUSTOM PID/LQR MOTION CONTROL!
+% optimized_structure_anatomy_trajectory_implementation_custom(ga_structure0,ga_assembly_parameters0,s0_rand_s_rand_anat(1,:),way_pts,time_pts,s_pid,'PID[100-0.4-25] MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:0.1] ');
+% optimized_structure_anatomy_trajectory_implementation_custom2(ga_structure0,ga_assembly_parameters0,s0_rand_s_rand_anat(1,:),way_pts,time_pts,s_lqr,'LQR OPTIMAL MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:1] ');
+optimized_structure_anatomy_trajectory_implementation_custom3(ga_structure0,ga_assembly_parameters0,s0_rand_s_rand_anat(1,:),way_pts,time_pts,s_pd,'PD+FeedFwd Dynamics MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:0.1] ');
 
-optimized_structure_anatomy_trajectory_implementation_custom(ga_structure3,ga_assembly_parameters3,s3_ga_test_mult_4_11_20_opt_anat(1,:),way_pts,time_pts,s_pid,'PID[100-0.4-25] MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:0.1] ');
+% optimized_structure_anatomy_trajectory_implementation_custom(ga_structure3,ga_assembly_parameters3,s3_ga_test_mult_4_11_20_opt_anat(1,:),way_pts,time_pts,s_pid,'PID[100-0.4-25] MOTION CONTROL - 5th ORDER TRAJECTORY[task points:5-dt:0.1] ');

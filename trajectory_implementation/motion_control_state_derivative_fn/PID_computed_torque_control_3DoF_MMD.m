@@ -2,8 +2,6 @@ function [dot_x] = PID_computed_torque_control_3DoF_MMD(x_d,ddq_d,x,dt,s_pid)
 % Follows the procedure pesented in p.197-199 in Robot Manipulator
 % Control - Theory and Practice 2nd ed.
 
-% last sync with pc-lef 18-12-20 18:46
-
 % q_d = 3x1 vector for desired final joint position
 % dq_d = 3x1 vector for desired final joint velocity
 % ddq_d = 3x1 vector for desired final joint acceleration

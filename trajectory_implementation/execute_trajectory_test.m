@@ -2,6 +2,8 @@
 % This is the basis for test file:
 % optimized_structure_anatomy_trajectory_implementation_test.m
 
+% * edit 24-12-20 : No quinticpolytraj used to execute in laptop only
+
 % Author: Nikolaos Stravopodis
 
 % Research on Optimal Trajectory Implementation of SMM 
@@ -158,26 +160,41 @@ for i_cnt=1:length(time_pts)
 end
 
 % Trajectory:
-[q_d, dq_d, ddq_d, pp] = quinticpolytraj(way_pts, time_pts, time_samples);
+% [q_d, dq_d, ddq_d, pp] = quinticpolytraj(way_pts, time_pts, time_samples);
+
 
 %% Solve ode for 1st pair of points at the same time step(just for example)
+%% CONTROL PARAMETERS
 % PID Parametes
 field1 = 'kp';        value1 = 100;
 field2 = 'ki_factor'; value2 = 0.4; % for closed loop stability ki < kp * kd => ki = i_factor * (kp * kd), i_factor \in [0,1]
 field3 = 'kd';        value3 = 25;
 s_pid = struct(field1,value1,field2,value2,field3,value3);
+% LQR Parameters
+q_eps  = [100 100 100];    % penaltizes high integral error
+q_e    = [100 100 100];    % penaltizes position error
+q_de   = [1 1 1];          % penaltizes velocity error
+r_pen1   = 1;         % only testing
+r_pen2   = 1;     
+r_pen3   = 1;      
+field1 = 'Qpen';        value1 = diag(horzcat(q_eps,q_e,q_de)); % 9x9
+field2 = 'Rpen';        value2 = diag([r_pen1 r_pen2 r_pen3]);  % 3x3    
+field3 = 'Nnonlin';     value3 = zeros(3);
+s_lqr  = struct(field1,value1,field2,value2,field3,value3);
 
+%% EXECUTION TIME
 tspan = [time_pts(1) time_pts(2)];
-%tspan = time_pts(1):0.1:time_pts(2);
 dt = tspan(length(tspan)) - tspan(1);
-x0(1:3) = q_d(:,1);
-x0(4:6) = dq_d(:,1);
+
+%% INITIAL AND DESIRED FINAL STATE
+x0(1:3) = q_d(:,1); x0(4:6) = dq_d(:,1);
 x_d =  vertcat(q_d(:,101), dq_d(:,101));
+
+%% STATE DERIVATIVE FUNCTION AND ODE SOLUTION
 ode_derivative_Fcn = @(t,x) PID_computed_torque_control_3DoF_MMD(x_d,ddq_d(:,101),x,dt,s_pid);
-% options = odeset('OutputFcn',@(t,x,flag) TorqueOutputFcn_PID_computed_torque_control_3DoF_MMD(t,x,flag,x_d,ddq_d(:,1)) );
 [t,x] = ode113(ode_derivative_Fcn, tspan, x0);
 
-% To calculate torque the derivative fn is called inside for...
+%% CALCULATE MOTOR TORQUES FOR EXTRACTED STATES
 Vold = calculatePotentialEnergyMatrix_anat_3dof(x0(1:3),xi_ai_anat,g_sli_anat,M_b_link_as2);
 for ode_cnt=1:size(t,1)
     [real_torque(ode_cnt,:),V(ode_cnt,:)] = postODEoutput_PID_computed_torque_control_3DoF_MMD(x(ode_cnt,:)',x_d,ddq_d(:,101),dt,s_for_compute_Mij_429_3DoF,s_pid,Vold);
@@ -185,4 +202,4 @@ for ode_cnt=1:size(t,1)
 end
 
 %% PLOTS
-% Plot1-> q(t), Plot2-> dq(t), Plot3-> torque(t)
+% Plot1-> q(t), Plot2-> dq(t), Plot3-> torque(t) 
