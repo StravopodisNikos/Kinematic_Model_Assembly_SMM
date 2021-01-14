@@ -24,7 +24,7 @@ close all;
 %% SET DESIRED TRAJECTORY PROPERTIES
 % C-space task points
 way_pts = [1.5708 -0.54 0.15  -0.7854  0.7854  ;...    %q1
-           1.5708 1.05 -0.58   0.7854  0       ;...    %q2
+           1.5708 1.05 -0.58   0.7854  1.5708  ;...    %q2
            1.5708 2.14 -2.45  -1.5708  -0.5   ];...    %q3
 % time steps
 t_start = 0; t_finish = 10;  % [sec] 
@@ -120,20 +120,40 @@ field6 = 'par6'; value6 = zeros(3,1); % just preallocation for dq
 s_for_compute_Mij_429_3DoF = struct(field1,value1,field2,value2,field3,value3,field4,value4,field5,value5,field6,value6);
 
 
-%% Call ga 
-generations = 250;
-population = 25;
-tolerance = 1e-03;
-stall_limit = 15;
-options = optimoptions('ga','Generations',generations,'PopulationSize',population,'Display','iter','FunctionTolerance',tolerance,'StallGenLimit',stall_limit,'UseParallel', true, 'UseVectorized', false);
-FitnessFunction1 = @(x)optimized_lqr_min_error_state(s_for_compute_Mij_429_3DoF,way_pts,time_pts,x); 
+% % %% Call ga 
+% % generations = 250;
+% % population = 25;
+% % tolerance = 1e-03;
+% % stall_limit = 15;
+% % options = optimoptions('ga','Generations',generations,'PopulationSize',population,'Display','iter','FunctionTolerance',tolerance,'StallGenLimit',stall_limit,'UseParallel', true, 'UseVectorized', false);
+% % FitnessFunction1 = @(x)optimized_lqr_min_eps_norm(s_for_compute_Mij_429_3DoF,way_pts,time_pts,x); 
+% % 
+% % nvars1 = 10;
+% % A1 = []; b1 = [];
+% % Aeq1 = []; beq1 = [];
+% % IntCon1 = [];
+% % LB1 = 0.00001 * ones(1,10);
+% % UB1 = 100000  * ones(1,10);
+% % tic
+% % [X,Fval,Exitflag,Output] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],IntCon1,options)
+% % toc
 
+%% Gamultiobj
+generations = 250;
+population = 15;
+tolerance = 1e-03;
+crossover_fraction = 0.95;     
+elite_count = 0.15*population; 
+stall_limit = 15;
 nvars1 = 10;
 A1 = []; b1 = [];
 Aeq1 = []; beq1 = [];
-IntCon1 = [];
 LB1 = 0.00001 * ones(1,10);
 UB1 = 100000  * ones(1,10);
-tic
-[X,Fval,Exitflag,Output] = ga(FitnessFunction1,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],IntCon1,options)
-toc
+Bound = [LB1; UB1];
+options = optimoptions('gamultiobj','Generations',generations,'PopulationSize',population,'PopInitRange',Bound,'Display','iter','CrossoverFraction',crossover_fraction,'StallGenLimit',stall_limit,'FunctionTolerance',tolerance,'UseParallel', true, 'UseVectorized', false);
+FitnessFunctions = @(x)[optimized_lqr_min_eps_norm(s_for_compute_Mij_429_3DoF,way_pts,time_pts,x),optimized_lqr_min_tau_vel_norm(s_for_compute_Mij_429_3DoF,way_pts,time_pts,x)];
+tic;
+[X_mult,Fval_mult,exitflag_mult,output_mult] = gamultiobj(FitnessFunctions,nvars1,A1,b1,Aeq1,beq1,LB1,UB1,[],options);
+toc;
+save('lqr_random_1_1_21.mat','generations','population','tolerance','stall_limit','X_mult','Fval_mult','exitflag_mult','output_mult')

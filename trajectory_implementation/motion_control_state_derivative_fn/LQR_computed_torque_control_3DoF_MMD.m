@@ -1,12 +1,6 @@
-function [dot_x] = LQR_computed_torque_control_3DoF_MMD(x_d,ddq_d,x,dt,s_lqr)
+function [dot_e] = LQR_computed_torque_control_3DoF_MMD(e,s_lqr)
 % Follows the procedure pesented in p.246-247 in Robot Manipulator
 % Control - Theory and Practice 2nd ed.
-
-% q_d = 3x1 vector for desired final joint position
-% dq_d = 3x1 vector for desired final joint velocity
-% ddq_d = 3x1 vector for desired final joint acceleration
-% x = [  q         x_d = [ q_d
-%        dq  ]             dq_d  ]
 
 % Linear State Space System:
 % d/dt  [  ε     = [  0     I33     0     *  [  ε         + [ 0     * u   
@@ -14,14 +8,6 @@ function [dot_x] = LQR_computed_torque_control_3DoF_MMD(x_d,ddq_d,x,dt,s_lqr)
 %          de ]       0      0      0  ]        de  ]         I33 ]
 
 % d(e)/dt        =         A              *   e           + B       *  u
-
-epsilon  =  (x_d(1:3)-x(1:3))*dt; % 3x1
-dot_x_d  = vertcat(x_d(4:6), ddq_d);                % 6x1
-
-% Error State vector
-e(1:3,1) = epsilon ;                % epsilon
-e(4:6,1) = x_d(1:3) - x(1:3) ;      % e
-e(7:9,1) = x_d(4:6) - x(4:6) ;      % de
 
 % For state vector x = [eps e de] 9x1 vector
 % d(x)/dt = A * x + B * w
@@ -49,5 +35,4 @@ K = lqr(A,B,Q,R,N);
 
 %% Linear System of differential equations to solve
 dot_e = (A - B*K) * e;
-dot_x = dot_x_d - dot_e(4:9);
 end
